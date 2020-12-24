@@ -8,14 +8,14 @@ console.log("Country: ", country);
 console.log("Continent: ", continent);
 console.log("Population: ", population);
 
-let isIsland = false;
+let isIsland = true;
 let language;
 console.log("Is my country and Island: ", isIsland);
 console.log("Population: ", population);
 console.log("Country: ", country);
 console.log("Language: ", language);
 
-language = 'Catalan';
+language = 'English';
 
 console.log("Half population is: ", population / 2);
 console.log("Population of my country + 1: ", population + 1);
@@ -90,6 +90,7 @@ let johnBMI2 = johnMass / (johnHeight * johnHeight);
 
 let isMarkBMIHigher = markBMI1 > johnBMI1;
 
+// [AMN] Above line is a summary way of doing these lines below...
 // if (markBMI1 > johnBMI1) {
 //     isMarkBMIHigher = true;
 // } else {
@@ -100,3 +101,48 @@ console.log("Mark BMI is: ", markBMI1, markBMI2);
 console.log("John BMI is: ", johnBMI1, johnBMI2);
 console.log("Is Mark BMI higher than John's: ", isMarkBMIHigher);
 
+/* Coding Challenge #2
+Use the BMI example from Challenge #1, and the code you already wrote, and
+improve it.
+Your tasks:
+1. Print a nice output to the console, saying who has the higher BMI. The message
+is either "Mark's BMI is higher than John's!" or "John's BMI is higher than Mark's!"
+2. Use a template literal to include the BMI values in the outputs. Example: "Mark's
+BMI (28.3) is higher than John's (23.9)!"
+Hint: Use an if/else statement �
+GOOD LUCK */
+
+if (isMarkBMIHigher) {
+    console.log("Mark's BMI is higher than John's!");
+} else {
+    console.log("John's BMI is higher than Mark's!");
+}
+
+if (isMarkBMIHigher) {
+    console.log("Mark's BMI (" + markBMI1 + ") is higher than John's (" + johnBMI1 + ")!"); 
+} else {
+    console.log("John's BMI (" + johnBMI1 + ") is higher than Mark's (" + markBMI1 + ")!"); 
+}
+
+if (isMarkBMIHigher) {
+    console.log(`Mark's BMI (${markBMI1}) is higher than John's (${johnBMI1})!`); 
+} else {
+    console.log(`John's BMI (${johnBMI1}) is higher than Mark's (${markBMI1})!`); 
+}
+
+// let numNeighbours = prompt("How many neighbours coutries does your country have?");
+// let numNeighbours = Number(prompt("How many neighbours coutries does your country have?"));
+
+// if (numNeighbours === 1) {
+//     console.log('My country has only 1 neighbour country.');
+// } else if (numNeighbours > 1) {
+//     console.log('My country has more than 1 neighbour country.');
+// } else {
+//     console.log('No borders!');
+// };
+
+if (language === 'English' && population < 50000000 && isIsland) {
+    console.log('You should live in ' + country);
+} else {
+    console.log(country + ' does not meet your criteria.');
+}
