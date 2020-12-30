@@ -1,5 +1,19 @@
 'use strict';
 
+// [AMN] Important note!!!
+// innerHTML passes HTML content meanwhile textcontent uses straight text. 
+// Example:
+/* var example = document.getElementById('exampleId');
+
+example.textContent = '<a href="https://google.com">google</a>';
+
+output: <a href="http://google.com">google</a>
+
+example.innerHTML = '<a href="https://google.com">google</a>';
+
+output: google
+*/
+
 // Setting the score and highscore.
 let score = 20;
 let highscore = 0;
@@ -13,7 +27,9 @@ function getRandomNumber () {
 
 // Checking the button 'Check!'.
 function checkClickedNumber() {
-    
+
+        /* Number() converts a string into a number so we can compare it with the
+           random number. */
         let numberEntered = Number(document.querySelector(".guess").value);
         // console.log("Number entered", numberEntered);
         // console.log("Random number: ", randomNumber);
@@ -22,6 +38,8 @@ function checkClickedNumber() {
             if (numberEntered === randomNumber) {
                 document.querySelector(".message").innerHTML = "🎉 Correct Number!";
                 document.body.style.backgroundColor = "#60b347";
+                document.querySelector('.number').textContent = randomNumber;
+                document.querySelector('.number').style.width = '30rem';
                 isGameOver = true;
                 if (score > highscore) { 
                     highscore = score;
@@ -37,7 +55,7 @@ function checkClickedNumber() {
                     };
                     document.querySelector(".score").innerHTML = score;
                 } else {
-                    document.querySelector(".message").innerHTML = "💥 You lost the game!";
+                    document.querySelector(".message").innerHTML = "💥  You lost the game!";
                     isGameOver = true;
                 };
             };
@@ -54,6 +72,9 @@ function onceAgain() {
     document.querySelector(".guess").value = "";
     document.querySelector(".score").innerHTML = 20;
     document.body.style.backgroundColor = "#222";
+    document.querySelector('.number').textContent = '?';
+    document.querySelector('.number').style.width = '15rem';
+
     // console.log("onceAgain");
 };
 
@@ -61,9 +82,9 @@ function onceAgain() {
 
 // Event listener when we want to play again.
 // console.log("Before queryselector OnceAgain")
-document.querySelector(".again").addEventListener('click', function() { onceAgain()});
+document.querySelector(".again").addEventListener('click', onceAgain);
 
 // Event listener when we click the button "check!" to check our guess.
 if (!isGameOver) {
-    document.querySelector(".check").addEventListener('click', function() {checkClickedNumber()});
+    document.querySelector(".check").addEventListener('click', checkClickedNumber);
 };
