@@ -210,7 +210,54 @@ addExpr2(2, 5);
 addExpr2(2, 5, 8, 12); // we can pass more arguments that the ones defined.
 
 var addArrow2 = (a, b) => {
-    console.log(arguments); // not defined because in arrow functions can't be used.
+    // console.log(arguments); // not defined because in arrow functions can't be used.
     return a + b;
 };
 addArrow2(2, 5, 8, 12);
+
+// Primitives vs Objects
+
+let lastName = 'Williams';
+let oldLastName = lastName;
+lastName = 'Davis';
+console.log(lastName, oldLastName);
+
+const jessica = {
+    firstName: 'Jessica',
+    lastName: 'Williams',
+    age: 27
+};
+
+// Unless the primitives variables the objects content are not copied.
+// Jasvascript creates a new object that points to the same memory address.
+const marriedJessica = jessica;
+marriedJessica.lastName = 'Davis';
+console.log('Before marriage: ', jessica);
+console.log('After marriage: ', marriedJessica);
+
+// We can change the property lastName within marriedJessica being it a constant
+// because the content is not in the memory stack. It's in the heap.
+// We can't change marriedJessica by another object because it's a constant and
+// we in this case would be changing the address pointing to the heap in the stack.
+// marriedJessica = {} // gives an error in the console.
+
+// Copying objects with object.assign. Object.assign merges to objects. So to copy
+// we only need to merge the object with an empty one.
+
+const jessica2 = {
+    firstName: 'Jessica',
+    lastName: 'Williams',
+    age: 27,
+    family: ['Alice', 'Bob']
+};
+
+const jessicaCopy = Object.assign({}, jessica2);
+jessicaCopy.lastName = 'Davis';
+// Here what happens is that at first level we created a copy with Object.assign()
+// but the objects within the copy where a shallow copy not a deep copy and therefore
+// are pointing to the same area in the heap memory.
+jessicaCopy.family.push('Mary');
+jessicaCopy.family.push('John');
+console.log('Before marriage: ', jessica2);
+console.log('After marriage: ', jessicaCopy);
+
