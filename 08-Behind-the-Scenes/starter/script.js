@@ -107,3 +107,54 @@ console.log(z === window.z); // the console returns false because x isn't in win
 // - Declare variables at the top of the code.
 // - Declare functions before we use them at the beginning of the code.
 
+// [AMN] This keyword in action
+
+// Here the this is the window itself
+console.log(this);
+
+// Here the this is undefined because we are in strict mode otherwise it would be
+// the window object (who't the father of the function). This is because the function
+// is not attached to any object. Anyway functions instead of arrow functions have
+// their this and in case we had any method we could use it.
+
+const calcAge2 = function (birthYear) {
+    console.log(2037 - birthYear);
+    console.log(this);
+};
+calcAge2(1991);
+
+// Here the this is the parent's object (the window) because arrow functions 
+// don't have this and then they take their parents one.
+
+const calcAgeArrow = birthYear => {
+    console.log(2037 - birthYear);
+    console.log(this);
+};
+calcAgeArrow(1980);
+
+// Here the this keyword as it is in a function and is within an object so it takes 
+// their parent object value (the parent is the const jonas). It shows the year and
+// the calcAge() function.
+const jonas = {
+    year: 1991,
+    calcAge2: function() {
+        console.log(this);
+        console.log(2037 - this.year);
+    }
+};
+jonas.calcAge2();
+
+// Here we can see that this takes the value of the parent object because once
+// matilda copies the jonas method calcAge() the this is referred to matilda
+
+const matilda = {
+    year: 2017
+};
+
+matilda.calcAge2 = jonas.calcAge2; // We copy not call the method (so no parenthesis)
+matilda.calcAge2();
+
+// Now as the functon is not attached to any object the this is undefined.
+
+const f = jonas.calcAge2;
+f();
