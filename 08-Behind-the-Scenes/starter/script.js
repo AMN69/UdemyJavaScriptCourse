@@ -156,5 +156,61 @@ matilda.calcAge2();
 
 // Now as the functon is not attached to any object the this is undefined.
 
-const f = jonas.calcAge2;
-f();
+// const f = jonas.calcAge2;
+// f();
+
+// Regular functions vs arrow ones.
+
+// var firstName2 = 'Matilda'; // on the greet method will say Matilda. It's in the window object.
+// let firstName2 = 'Matilda'; // on the greet method will say undefined.
+// const firstName2 = 'Matilda'; // on the greet method will say undefined.
+const jonas2 = {
+    firstName2: 'Jonas',
+    year: 1991,
+    calcAge: function () {
+        console.log(this);
+        console.log(2037 - this.year);
+
+        // Here the problem is that within a function the this is undefined. Functions
+        // have their scope and they don't take the parent this.
+        // It is like the function is outside the method calcAge. We need to use
+        // a const usually named self or that to copy this and avoid the problem
+        
+        // const self = this; // could be named self, that or pepe. Usually self of that
+        // const isMillenial = function () {
+        //     console.log(this);
+        //     // console.log(this.year >=1981 && this.year <= 1996);
+        //     console.log(self.year >=1981 && self.year <= 1996);
+        // };
+
+        //Solution 2 - to avoid the problem. Here this is year = 1991 because an
+        // arrow function.
+        const isMillenial = ()=> {
+            console.log(this);
+            console.log(this.year >= 1981 && this.year <= 1996);
+        };
+        isMillenial();
+    },
+    greet: () => console.log(`Hey ${this.firstName2}`) // not use arrow functions as method. Better a regular function.
+};
+// it's undefined because the this of greet as arrow function is the global scope.
+// on the global scope this = window.
+jonas2.greet(); 
+jonas2.calcAge();
+// If we defined a var called firstName before jonas2 like this var firstName = 'Matilda'
+// we would see in the greet on the console.log 'Hey Matilda' instead of undefined.
+// it's not the same for const and let.
+
+// Arguments keyword
+const addExpr2 = function (a, b) {
+    console.log(arguments); // show all the arguments passed to the function
+    return a + b;
+};
+addExpr2(2, 5);
+addExpr2(2, 5, 8, 12); // we can pass more arguments that the ones defined.
+
+var addArrow2 = (a, b) => {
+    console.log(arguments); // not defined because in arrow functions can't be used.
+    return a + b;
+};
+addArrow2(2, 5, 8, 12);
