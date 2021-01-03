@@ -49,3 +49,61 @@ calcAge(1991);
 // the function printAge() can't be called because both, age and printAge() are in a child scope.
 // console.log(age);
 // printAge();
+
+// Hoisting and TDZ (Temporal Dead Zone)
+
+console.log(me); // console log undefined because is a var.
+// console.log(job); // console log cannot access before initialization because is a let.
+// console.log(year); // idem that let.
+
+var me = 'Jonas';
+let job = 'teacher';
+const year = 1991;
+
+// Functions test:
+// a) Function declaration can be called before defining it.
+// b) Function expression and arrow functions CANNOT be called before.
+
+console.log(addDecl(2, 3));
+// console.log(addExpr(2, 3));
+// console.log(addArrow(2, 3));
+
+function addDecl(a, b) { // [AMN] function declaration
+    return a + b;
+};
+
+const addExpr = function (a, b) { // [AMN] function expression
+    return a + b;
+}; // if instead of const we defined as var we would get an error that addArrow is not a function.
+
+const addArrow = (a, b) => a + b; // [AMN] arrow function
+// the same that above: as a var this wouldn't work.
+
+// Example
+// [AMN] As we use the numProducts var before we define it, and taking into 
+// account that by hosting something not defined is undefined, and that undefined
+// is 'falsy' the if is true and therefore we execute the function. In case we
+// really had 10 products we would be deleting the cart.
+
+console.log(undefined);
+if(!numProducts) deleteShoppingCart();
+
+var numProducts = 10;
+
+function deleteShoppingCart() {
+    console.log('All products deleted!');
+};
+
+var x = 1;
+var y = 2;
+const z = 3;
+
+console.log(x === window.x); // the console returns true because x is in window obj
+console.log(y === window.y); // the console returns false because x isn't in window obj
+console.log(z === window.z); // the console returns false because x isn't in window obj
+
+// Best practices:
+// - Don't use var.
+// - Declare variables at the top of the code.
+// - Declare functions before we use them at the beginning of the code.
+
