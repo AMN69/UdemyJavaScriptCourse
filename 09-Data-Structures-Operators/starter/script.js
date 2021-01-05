@@ -1,24 +1,122 @@
 'use strict';
 
-const restaurant = {
-  name: 'Classico Italiano',
-  location: 'Via Angelo Tavanti 23, Firenze, Italy',
-  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
-  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
-  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
-
-  openingHours: {
-    thu: {
-      open: 12,
-      close: 22,
-    },
-    fri: {
-      open: 11,
-      close: 23,
-    },
-    sat: {
-      open: 0, // Open 24 hours
-      close: 24,
-    },
-  },
+const game = {
+  team1: 'Bayern Munich', 
+  team2: 'Borrussia Dortmund', 
+  players: [
+    [
+    'Neuer',
+    'Pavard',
+    'Martinez',
+    'Alaba',
+    'Davies',
+    'Kimmich',
+    'Goretzka',
+    'Coman',
+    'Muller',
+    'Gnarby',
+    'Lewandowski'
+    ], 
+    [
+    'Burki',
+    'Schulz',
+    'Hummels',
+    'Akanji',
+    'Hakimi',
+    'Weigl',
+    'Witsel',
+    'Hazard',
+    'Brandt',
+    'Sancho',
+    'Gotze'
+    ], 
+  ],
+  score: '4:0',
+  scored: ['Lewandowski', 'Gnarby', 'Lewandowski', 'Hummels'],
+  date: 'Nov 9th, 2037',
+  odds: {
+    team1: 1.33,
+    x: 3.25,
+    team2: 6.5,
+  }, 
 };
+
+/* 1. Create one player array for each team (variables 'players1' and 'players2')
+*/
+const [players1, players2] = game.players;
+console.log(players1);
+console.log(players2);
+
+/* 2. The first player in any player array is the goalkeeper and the others are field
+ players. For Bayern Munich (team 1) create one variable ('gk') with the goalkeeper's 
+ name, and one array ('fieldPlayers') with all the remaining 10 field players
+*/
+
+let gk;
+let fieldPlayers = [];
+
+[gk, ...fieldPlayers] = game.players[0];
+
+console.log("Goalkeeper: ", gk);
+console.log("Field players: ", fieldPlayers);
+
+/* 3. Create an array 'allPlayers' containing all players of both teams (22 players)
+*/
+
+let allPlayers = [];
+
+// Array.prototype.push.apply(allPlayers = Array.from(game.players[0]), game.players[1]);
+Array.prototype.push.apply(allPlayers = [...game.players[0], ...game.players[1]]);
+
+console.log("All players: ", allPlayers);
+console.log(game.players);
+
+/* 4. During the game, Bayern Munich (team1) used 3 substitute players. So create a new array 
+('players1Final') containing all the original team1 players plus 'Thiago', 'Coutinho' and 'Perisic'.
+*/
+
+let players1Final = [];
+// Array.prototype.push.apply(players1Final = Array.from(game.players[0]), ['Thiago', 'Coutinho', 'Perisic']);
+Array.prototype.push.apply(players1Final = [...game.players[0], 'Thiago', 'Coutinho', 'Perisic']);
+// [players1Final] = [Array.from(game.players[0]), 'Thiago', 'Coutinho', 'Perisic'];
+console.log("Players1Final: ", players1Final);
+console.log(game.players);
+
+/* 5. Based on the game.odds object, create one variable for each odd (called 'team1', 'draw' and 'team2')
+*/
+
+let [team1, draw, team2] = [ game.odds.team1, game.odds.x, game.odds.team2 ];
+console.log("Team1: ", team1);
+console.log("draw: ", draw);
+console.log("Team2: ", team2);
+
+/* 6. Write a function ('printGoals') that receives an arbitrary number of player names (not an array) and 
+prints each of them to the console, along with the number of goals that were scored in total 
+(number of player names passed in) 
+*/
+
+function printGoals () {
+  console.log('The players that scored are: ')
+  for (let i = 0; i < arguments.length; i++) {
+    console.log(`- ${arguments[i]}`);
+  };
+  console.log('The number of goals were: ' + arguments.length);
+};
+
+printGoals('Davies', 'Muller', 'Lewandowski', 'Kimmich');
+printGoals(game.scored[0], game.scored[1], game.scored[2], game.scored[3]);
+
+/* 7. The team with the lower odd is more likely to win. Print to the console which team is more likely 
+to win, without using an if/else statement or the ternary operator. 
+*/
+
+function whoIsLikelyToWin () {
+  if (game.odds.team1 > game.odds.team2) {
+    return game.team2;
+  } else {
+    return game.team1;
+  };
+};
+
+console.log(whoIsLikelyToWin());
+
