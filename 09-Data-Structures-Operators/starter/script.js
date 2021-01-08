@@ -311,4 +311,67 @@ for (const [index, key] of gameEvents) {
   } else {
     console.log(`[SECOND HALF] ${index}: ${key}`);
   };;
-}
+};
+
+/* Coding Challenge #4
+Write a program that receives a list of variable names written in underscore_case and convert them to camelCase.
+The input will come from a textarea inserted into the DOM (see code below to insert the elements), and conversion will 
+happen when the button is pressed.
+Test data (pasted to textarea, including spaces):
+underscore_case
+first_name
+Some_Variable
+calculate_AGE
+delayed_departure
+Should produce this output (5 separate console.log outputs): 
+underscoreCase ✅
+firstName ✅
+someVariable ✅
+calculateAge ✅
+delayedDeparture ✅
+Hints:
+§ Remember which character defines a new line in the textarea 😉
+§ The solution only needs to work for a variable made out of 2 words, like a_b
+§ Start without worrying about the ✅. Tackle that only after you have the variable
+name conversion working 😉
+§ This challenge is difficult on purpose, so start watching the solution in case
+you're stuck. Then pause and continue!
+Afterwards, test with your own test data! GOOD LUCK
+*/
+
+// We open a textarea to enter the data to be converted.
+var textarea = document.createElement('textarea');
+textarea.id = 'theId';
+textarea.name = "textToModify";
+textarea.value = "a_b";
+document.body.append(textarea);
+
+// We prepare a button to click and sent the text entered in the textarea to the function for camelCase.
+var button = document.createElement('button');
+button.innerText = "Click me!";
+document.body.append(button);
+button.addEventListener('click', stringToCamelCase);
+
+// const stringToTransform = "a_b";
+
+function stringToCamelCase () {
+  const someString = document.getElementById('theId').value.split("\n");
+  console.log("someString", someString);
+  console.log(document.getElementById('theId').value);
+  let underscorePos;
+  let partToReplace;
+  let partToUpperCase;
+  let newStr;
+  let tick = ' ';
+  for (let i = 0; i < someString.length; i++) {
+    underscorePos = someString[i].indexOf('_');
+    partToReplace = "_" + someString[i][underscorePos + 1]
+    partToUpperCase = someString[i][underscorePos + 1].toUpperCase();
+    tick = tick + '✅';
+    newStr = someString[i].replace(partToReplace, partToUpperCase) + tick;
+    console.log(newStr);
+  };
+  return newStr;
+};
+
+// console.log(stringToCamelCase(stringToTransform));
