@@ -368,10 +368,16 @@ function stringToCamelCase () {
     partToReplace = "_" + someString[i][underscorePos + 1]
     partToUpperCase = someString[i][underscorePos + 1].toUpperCase();
     tick = tick + '✅';
-    newStr = someString[i].replace(partToReplace, partToUpperCase) + tick;
+    newStr = someString[i].trim().replace(partToReplace, partToUpperCase).padEnd(20) + tick;
     console.log(newStr);
   };
   return newStr;
 };
 
 // console.log(stringToCamelCase(stringToTransform));
+
+const announcement = 'All passengers come to boarding door 23. Boarding door 23!';
+
+console.log(announcement.replaceAll('door', 'gate'));
+
+
