@@ -31,6 +31,45 @@ Test data for bonus:
 Hints: Use many of the tools you learned about in this and the last section 😉 GOOD LUCK 😀
 */
 
+// [AMN] Important note about this and bind method:
+// The first example don't use bind, therefore when I call the method registerNewAnswer
+// the this word points to the addEventListener query '.poll' and this can't
+// be used within the object poll.
+
+// const poll = {
+//     question: "What is your favourite programming language?", 
+//     options: ["0: JavaScript", "1: Python", "2: Rust", "3: C++"],
+//     // This generates [0, 0, 0, 0]. More in the next section! 
+//     answers: new Array(4).fill(0),
+//     registerNewAnswer: function () {
+//         const answer = Number(window.prompt("What is your favourite programming language? 0: JavaScript; 1: Python; 2: Rust; 3: C++"))
+//         switch (answer) {
+//             case 0:
+//             case 1:
+//             case 2: 
+//             case 3: 
+//                 poll.answers[answer]++
+//                 poll.displayResults(poll.answers)
+//                 break;
+//             default:
+//                 window.prompt("The answer must be 0, 1, 2 or 3");
+//                 break;
+//         };
+//     },
+//     displayResults: function (somePollAnswers) {
+//         if (Array.isArray(somePollAnswers)) {console.log(somePollAnswers)}
+//         else {console.log(`Poll results are: ${[somePollAnswers]}`)}
+//     }
+// };
+
+// // Entering poll answers:
+// const answerPoll = document.querySelector('.poll');
+// answerPoll.addEventListener('click', poll.registerNewAnswer);
+
+// Nevertheless when we add bind(poll) to the callback function call by the 
+// high order function addEventListener we CAN use this within the poll
+// object.
+
 const poll = {
     question: "What is your favourite programming language?", 
     options: ["0: JavaScript", "1: Python", "2: Rust", "3: C++"],
@@ -43,8 +82,8 @@ const poll = {
             case 1:
             case 2: 
             case 3: 
-                poll.answers[answer]++
-                poll.displayResults(poll.answers)
+                this.answers[answer]++
+                this.displayResults(this.answers)
                 break;
             default:
                 window.prompt("The answer must be 0, 1, 2 or 3");
@@ -59,7 +98,8 @@ const poll = {
 
 // Entering poll answers:
 const answerPoll = document.querySelector('.poll');
-answerPoll.addEventListener('click', poll.registerNewAnswer);
+answerPoll.addEventListener('click', poll.registerNewAnswer.bind(poll));
+
 
 // Array option:
 // poll.displayResults([5,2,3]); 
@@ -95,3 +135,26 @@ answerPoll.addEventListener('click', poll.registerNewAnswer);
 // greetHey2('Josepet');
 
 // greet2('Holandiqui')('Andreuet');
+
+// [AMN] Partial use and a function returning a function all together
+
+const addTax = (rate, value) => value + value * rate;
+const addTax2 = (rate) => {
+    return (value) => {
+        return value + value * rate;
+    };
+};
+
+console.log(addTax(0.1, 200));
+
+const addVAT = addTax.bind(null, 0.23);
+
+console.log(addVAT(100));
+console.log(addVAT(23));
+
+// [AMN] Same solution w/o bind using a callback function called from a high-order
+// one.
+
+const addVAT2 = addTax2(0.3);
+console.log(addVAT2(200));
+
