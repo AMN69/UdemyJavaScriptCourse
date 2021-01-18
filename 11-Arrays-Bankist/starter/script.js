@@ -147,23 +147,32 @@ const totalWithdrawals = withdrawals.reduce((acc, mov) => acc + mov);
 //Second I check the user and pin entered.
 // If the user and pin is correct I unhide the main page.
 
-console.log("cheking");
+console.log("checking");
 btnLogin.addEventListener('click', checkUserAndPin);
+let userConnected;
+let indexOfUsrConnected;
 
 function checkUserAndPin() {
 
-  event.preventDefault(); // Avoids the button to restart the page.
-  for (let i = 0; i < accounts.length; i++) {
-    if (accounts[i].username === inputLoginUsername.value &&
-        accounts[i].pin === Number(inputLoginPin.value)) {
-        containerApp.style.opacity = 100;
-        inputLoginUsername.value = "";
-        inputLoginPin.value = "";
-        labelWelcome.textContent = `Good day, ${accounts[i].name}!`;
-        showMovs(accounts[i].movements);
-        showBal(accounts[i].movements);
-        showSummary(accounts[i].movements);
-    };
+  event.preventDefault(); // Prevent form from submitting that is its natural behaviour.
+  
+  const account = accounts.find(acc => (acc.username === inputLoginUsername.value && 
+    acc.pin === Number(inputLoginPin.value)));
+  indexOfUsrConnected = accounts.findIndex(acc => (acc.username === inputLoginUsername.value && 
+    acc.pin === Number(inputLoginPin.value)));
+  
+    console.log("Account: ", account);
+    console.log("IndexOfUsrConnected: ", indexOfUsrConnected);
+  
+  if (account) {
+      userConnected = account.username;
+      containerApp.style.opacity = 100;
+      inputLoginUsername.value = "";
+      inputLoginPin.value = "";
+      labelWelcome.textContent = `Good day, ${account.name}!`;
+      showMovs(account.movements);
+      showBal(account.movements);
+      showSummary(account.movements, account.interestRate);
   };
 };
 
@@ -173,11 +182,11 @@ function showBal(movements) {
   labelBalance.textContent = movements.reduce((acc, mov) => acc + mov, 0) + " €"; // Starts at zero
 };
 
-function showSummary(movements) {
+function showSummary(movements, intrRate) {
   labelSumIn.textContent = movements.filter((mov) => mov > 0).reduce((acc, mov) => acc + mov, 0) + " €";
   labelSumOut.textContent = Math.abs(movements.filter((mov) => mov < 0).reduce((acc, mov) => acc + mov, 0)) + " €";
   // In Jonas the interest below 1€ is filtered out.
-  labelSumInterest.textContent = (movements.filter((mov) => mov > 0).reduce((acc, mov) => acc + mov, 0) * 1.2 / 100) + " €";
+  labelSumInterest.textContent = ((movements.filter((mov) => mov > 0).reduce((acc, mov) => acc + mov, 0) * intrRate) / 100) + " €";
 }
 
 // Third - Show movememts
@@ -199,9 +208,28 @@ function showMovs (movements) {
   });
 };
 
-// Fourth - Show balance
+// Transfer money
 
-// Fith - Show summary
+btnTransfer.addEventListener('click', transferMoney);
+
+function transferMoney () {
+  console.log("Within transferMoney");
+  event.preventDefault();
+  const amountToTrans = Number(inputTransferAmount.value);
+  // const toWhomToTrans = inputTransferTo.value;
+
+  const index = accounts.findIndex(acc => (acc.username === inputTransferTo.value));
+
+  if (index > -1 && index !== indexOfUsrConnected) {
+    accounts[index].movements.push(amountToTrans);
+    accounts[indexOfUsrConnected].movements.push(amountToTrans * -1);
+    showMovs(accounts[indexOfUsrConnected].movements);
+    showBal(accounts[indexOfUsrConnected].movements);
+    showSummary(accounts[indexOfUsrConnected].movements, accounts[indexOfUsrConnected].interestRate);
+    console.log("Index receives trans: ", index);
+    console.log("Index sends trans: ", indexOfUsrConnected);
+  };
+};
 
 
 /////////////////////////////////////////////////
