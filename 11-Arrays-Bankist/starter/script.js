@@ -147,7 +147,6 @@ const totalWithdrawals = withdrawals.reduce((acc, mov) => acc + mov);
 //Second I check the user and pin entered.
 // If the user and pin is correct I unhide the main page.
 
-console.log("checking");
 btnLogin.addEventListener('click', checkUserAndPin);
 let userConnected;
 let indexOfUsrConnected;
@@ -161,25 +160,28 @@ function checkUserAndPin() {
   indexOfUsrConnected = accounts.findIndex(acc => (acc.username === inputLoginUsername.value && 
     acc.pin === Number(inputLoginPin.value)));
   
-    console.log("Account: ", account);
-    console.log("IndexOfUsrConnected: ", indexOfUsrConnected);
-  
   if (account) {
       userConnected = account.username;
       containerApp.style.opacity = 100;
       inputLoginUsername.value = "";
       inputLoginPin.value = "";
       labelWelcome.textContent = `Good day, ${account.name}!`;
-      showMovs(account.movements);
-      showBal(account.movements);
-      showSummary(account.movements, account.interestRate);
+      financialState(account.movements, account.interestRate);
   };
 };
 
 // We need a function to update the UI who calls showMovs(), showBal(), showSummary() 
 
+function financialState (accMov, accIntRate) {
+  showMovs(accMov);
+  showBal(accMov);
+  showSummary(accMov, accIntRate);
+};
+
+let balance;
 function showBal(movements) {
-  labelBalance.textContent = movements.reduce((acc, mov) => acc + mov, 0) + " €"; // Starts at zero
+  balance = movements.reduce((acc, mov) => acc + mov, 0); // Starts at zero
+  labelBalance.textContent = balance + " €"; 
 };
 
 function showSummary(movements, intrRate) {
@@ -213,24 +215,47 @@ function showMovs (movements) {
 btnTransfer.addEventListener('click', transferMoney);
 
 function transferMoney () {
-  console.log("Within transferMoney");
   event.preventDefault();
   const amountToTrans = Number(inputTransferAmount.value);
   // const toWhomToTrans = inputTransferTo.value;
 
   const index = accounts.findIndex(acc => (acc.username === inputTransferTo.value));
 
-  if (index > -1 && index !== indexOfUsrConnected) {
+  if (index > -1 && index !== indexOfUsrConnected && amountToTrans < balance && amountToTrans > 0) {
     accounts[index].movements.push(amountToTrans);
     accounts[indexOfUsrConnected].movements.push(amountToTrans * -1);
-    showMovs(accounts[indexOfUsrConnected].movements);
-    showBal(accounts[indexOfUsrConnected].movements);
-    showSummary(accounts[indexOfUsrConnected].movements, accounts[indexOfUsrConnected].interestRate);
-    console.log("Index receives trans: ", index);
-    console.log("Index sends trans: ", indexOfUsrConnected);
+    financialState(accounts[indexOfUsrConnected].movements, accounts[indexOfUsrConnected].interestRate);
+    inputTransferTo.value = "";
+    inputTransferAmount.value = "";
   };
 };
 
+// Close account
+
+btnClose.addEventListener('click', closeAccount);
+
+function closeAccount () {
+  event.preventDefault();
+  const indexOfUsrCancelled = accounts.findIndex(acc => (acc.username === inputCloseUsername.value && 
+    acc.pin === Number(inputClosePin.value)));
+  if (indexOfUsrCancelled === indexOfUsrConnected) {
+    accounts.splice(indexOfUsrConnected, 1);
+    containerApp.style.opacity = 0;
+  };
+  inputCloseUsername.value = "";
+  inputClosePin.value = "";
+};
+
+// Showing includes and some array methods
+
+console.log(movements);
+
+// Knowing if a certain value is within the array.
+console.log(movements.includes(-130));
+console.log(movements.some(mov => mov === -130));
+
+// Knowing if a range of values is within the array.
+console.log(movements.some(mov => mov > 1300));
 
 /////////////////////////////////////////////////
 
