@@ -246,6 +246,20 @@ function closeAccount () {
   inputClosePin.value = "";
 };
 
+// Request loan
+
+btnLoan.addEventListener('click', giveLoan);
+
+function giveLoan() {
+  event.preventDefault();
+  const amountToLoan = Number(inputLoanAmount.value);
+  if (accounts[indexOfUsrConnected].movements.some(mov => mov > amountToLoan * 0.1) && amountToLoan > 0) {
+    accounts[indexOfUsrConnected].movements.push(amountToLoan);
+    financialState(accounts[indexOfUsrConnected].movements, accounts[indexOfUsrConnected].interestRate);
+  };
+  inputLoanAmount.value = "";
+};
+
 // Showing includes and some array methods
 
 console.log(movements);
@@ -256,6 +270,10 @@ console.log(movements.some(mov => mov === -130));
 
 // Knowing if a range of values is within the array.
 console.log(movements.some(mov => mov > 1300));
+
+// Every checks whether all the elements in an array are true.
+
+console.log(movements.every(mov => mov > -10000));
 
 /////////////////////////////////////////////////
 
