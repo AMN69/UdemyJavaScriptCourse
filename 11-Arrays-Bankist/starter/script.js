@@ -260,6 +260,22 @@ function giveLoan() {
   inputLoanAmount.value = "";
 };
 
+// Sorting movements
+
+btnSort.addEventListener('click', sortMovs);
+
+let sorted = false;
+function sortMovs() {
+  sorted = !sorted;
+  if (sorted) {
+    const sortedMovs = accounts[indexOfUsrConnected].movements.sort((a, b) => a - b);
+    showMovs(sortedMovs);
+  } else {
+    showMovs(accounts[indexOfUsrConnected].movements);
+  };
+  console.log("Sorted: ", sorted);
+};
+
 // Showing includes and some array methods
 
 console.log(movements);
@@ -274,6 +290,52 @@ console.log(movements.some(mov => mov > 1300));
 // Every checks whether all the elements in an array are true.
 
 console.log(movements.every(mov => mov > -10000));
+
+// Flat and flatMap examples
+const arr = [[1,2,3], [4,5,6], 7, 8];
+console.log("Array flat: ", (arr.flat()));
+
+const arrDeep = [[[1,2], 3], [4, [5, 6], 7, 8]];
+console.log("Array deep flat: ", arrDeep.flat(2)); // going deep two levels within the array
+
+// flat method to calculate global accounts (all) balance
+const overallBalance = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+console.log("Overall balance with flat: ", overallBalance);
+
+// flatMap
+const overallBalance2 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+console.log("Overall balance with flatMap: ", overallBalance2);
+
+// Sorting takes array elements as strings even when they are numbers
+// therefore to sort arrays with numbers (for strings it works with sort) we have
+// to pass a function to the sort method.
+
+//Ascending
+// movements.sort((a, b) => {
+//   if (a > b) return 1;
+//   if (a < b) return -1;
+// });
+
+// The same that above simpler
+movements.sort((a, b) => a - b);
+
+console.log(movements);
+
+//Descending
+// movements.sort((a,b) => {
+//   if (a > b) return -1;
+//   if (a < b) return 1;
+// })
+
+// The same that above simpler
+movements.sort((a, b) => b - a);
+
+console.log(movements);
 
 /////////////////////////////////////////////////
 
