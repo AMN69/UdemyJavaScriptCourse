@@ -337,6 +337,56 @@ movements.sort((a, b) => b - a);
 
 console.log(movements);
 
+//Creating an array of 100 randomly throwing dice elements
+
+const arrDice = Array.from({length: 100}, () => Math.round(Math.random() * (6 - 1) + 1));
+console.log("100 randomly throwing dice elements: ", arrDice);
+
+// Array methods practice
+
+const BankDepositSum = accounts
+  .flatMap(acc => acc.movements) // 1st) From 4 arrays we generate only one
+  .filter(mov => mov > 0) // 2nd) From the array we filter positive movs 
+  .reduce((sum, cur) => sum + cur, 0); // 3rd) from the filtered we sum all the values
+console.log("Bank total deposits: ", BankDepositSum);
+
+const numDep1000 = accounts
+  .flatMap(acc => acc.movements) // 1st) From 4 arrays we generate only one
+  .reduce((count, cur) => (cur >= 1000 ? ++count : count), 0); // 2nd) we count starting from zero all deposits greater or equal to 1000.
+
+console.log("Num of dep >=1000: ", numDep1000);  
+const numDep1000Other = accounts // or we can
+  .flatMap(acc => acc.movements) // 1st) From 4 arrays we generate only one
+  .filter(mov => mov >= 1000).length; // 2nd) From the array we filter movs greater or equal 1000 and count them.
+console.log("Num of dep >=1000: ", numDep1000Other);
+
+const sums = accounts
+  .flatMap(acc => acc.movements) // 1st) From 4 arrays we generate only one
+  .reduce((sums, cur) => { // 2nd) we reduce the array to deposits and withdrawals
+    cur > 0 ? (sums.deposits += cur) : (sums.withdrawals += cur); 
+    return sums;
+  },
+  { deposits: 0, withdrawals: 0 } // Initialize the object to zero to accumulate later above.
+  );
+console.log(sums);
+
+const convertTitleCase = function (title) {
+  const capitalize = str => str[0].toUpperCase() + str.slice(1); // We put first letter to capital letter
+  
+  const exceptions = ['a', 'an', 'and', 'the', 'but', 'or', 'on', 'in', 'with'];
+
+  const titleCase = title // we take the title
+    .toLowerCase() // put the entire title to lowercase
+    .split(' ') // split by words
+    .map(word => (exceptions.includes(word) ? word : capitalize(word))) // in case the word is an exception we keep the word as it is otherwise we capitalize the word
+    .join(' '); // rebuild again the title joining individual words before separated in a new sentence with capital letters except if they are an exception.
+
+  return capitalize(titleCase);
+};
+
+console.log(convertTitleCase('this is a nice title'));
+
+
 /////////////////////////////////////////////////
 
 /*
@@ -507,4 +557,125 @@ GOOD LUCK 😀
 // calcAverageHumanAge2(dogAgesArr1);
 // calcAverageHumanAge2(dogAgesArr2);
 
+
+/* Coding Challenge #4
+Julia and Kate are still studying dogs, and this time they are studying if dogs are eating too much or too little.
+Eating too much means the dog's current food portion is larger than the recommended portion, and eating too little is the opposite.
+Eating an okay amount means the dog's current food portion is within a range 10% above and 10% below the recommended portion (see hint).
+Your tasks:
+1. Loop over the 'dogs' array containing dog objects, and for each dog, calculate the recommended food portion and add it to the object as a new property.
+ Do not create a new array, simply loop over the array. Forumla: recommendedFood = weight ** 0.75 * 28. (The result is in grams of food, and the weight
+ needs to be in kg)
+2. Find Sarah's dog and log to the console whether it's eating too much or too little. Hint: Some dogs have multiple owners, so you first need to find 
+Sarah in the owners array, and so this one is a bit tricky (on purpose) 🤓
+3. Create an array containing all owners of dogs who eat too much ('ownersEatTooMuch') and an array with all owners of dogs who eat too little 
+('ownersEatTooLittle').
+4. Log a string to the console for each array created in 3., like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's
+ dogs eat too little!"
+5. Log to the console whether there is any dog eating exactly the amount of food that is recommended (just true or false)
+6. Log to the console whether there is any dog eating an okay amount of food (just true or false)
+7. Create an array containing the dogs that are eating an okay amount of food (try to reuse the condition used in 6.)
+8. Create a shallow copy of the 'dogs' array and sort it by recommended food portion in an ascending order (keep in mind that the portions are inside the 
+  array's objects 😉)
+    The Complete JavaScript Course 25
+Hints:
+§ Use many different tools to solve these challenges, you can use the summary lecture to choose between them 😉
+§ Being within a range 10% above and below the recommended portion means: current > (recommended * 0.90) && current < (recommended * 1.10). Basically, 
+the current portion should be between 90% and 110% of the recommended portion.
+Test data:
+ 
+const dogs = [
+{ weight: 22, curFood: 250, owners: ['Alice', 'Bob'] }, 
+{ weight: 8, curFood: 200, owners: ['Matilda'] },
+{ weight: 13, curFood: 275, owners: ['Sarah', 'John'] }, 
+{ weight: 32, curFood: 340, owners: ['Michael'] },
+];
+GOOD LUCK 😀 */
+
+const dogs = [
+  { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] }, 
+  { weight: 8, curFood: 200, owners: ['Matilda'] },
+  { weight: 13, curFood: 275, owners: ['Sarah', 'John'] }, 
+  { weight: 32, curFood: 340, owners: ['Michael'] },
+  ];
+
+// 1. Loop over the 'dogs' array containing dog objects, and for each dog, calculate the recommended food portion and add it to the object as a new property.
+// Do not create a new array, simply loop over the array. Forumla: recommendedFood = weight ** 0.75 * 28. (The result is in grams of food, and the weight
+// needs to be in kg)
+
+dogs.forEach((dog) => {
+  dog.recommendedFood = Number(((dog.weight ** 0.75 * 28) / 1000).toFixed(2))
+});
+
+console.log("Dogs: ", dogs);
+
+// 2. Find Sarah's dog and log to the console whether it's eating too much or too little. Hint: Some dogs have multiple owners, so you first need to find 
+// Sarah in the owners array, and so this one is a bit tricky (on purpose) 🤓
+
+dogs.forEach((dog) => {
+  const isSarahs = dog.owners.includes('Sarah');
+  if (isSarahs) {
+    if ((dog.curFood > dog.recommendedFood * 1000 * 0.9) && (dog.curFood < dog.recommendedFood * 1000 * 1.1)) {
+      console.log("Sarah's dog is eating rigth");
+    } else if (dog.curFood < dog.recommendedFood * 1000 * 0.9) { console.log("Sarah's dog is eating less than recommended") }
+      else { console.log("Sarah's dog is eating more than recommended") };
+  };
+});
+
+// 3. Create an array containing all owners of dogs who eat too much ('ownersEatTooMuch') and an array with all owners of dogs who eat too little 
+// ('ownersEatTooLittle').
+
+let ownersEatTooMuch = [];
+let ownersEatTooLittle = [];
+
+dogs.forEach((dog) => {
+  if (dog.curFood < dog.recommendedFood * 1000 * 0.9) {
+    ownersEatTooLittle = ownersEatTooLittle.concat(dog.owners)
+  };
+  if (dog.curFood > dog.recommendedFood * 1000 * 1.1) {
+    ownersEatTooMuch = ownersEatTooMuch.concat(dog.owners)
+  };
+});
+
+console.log("Owners eat to much: ", ownersEatTooMuch);
+console.log("Owners eat too litte: ", ownersEatTooLittle);
+
+// 4. Log a string to the console for each array created in 3., like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's
+//  dogs eat too little!"
+
+function buildStr(arr, str) {
+  let stringToCon = '';
+  arr.forEach((dog, index) => {
+    if (index + 1 >= arr.length) {
+      stringToCon = stringToCon + dog + "'s eat too " + str;
+    } else {
+      stringToCon = stringToCon + dog + " and ";
+    }
+  });
+  return stringToCon;
+};
+
+console.log(buildStr(ownersEatTooMuch, ' much!'));
+console.log(buildStr(ownersEatTooLittle, 'little!'));
+
+// 5. Log to the console whether there is any dog eating exactly the amount of food that is recommended (just true or false)
+
+console.log("Is there any dog eating exactly the amount of recommended food: ", 
+  dogs.reduce((count, dog) => (dog.recommendedFood * 1000 === dog.curFood ? ++count : count), 0) > 0 ? 'true' : 'false');
+
+// 6. Log to the console whether there is any dog eating an okay amount of food (just true or false)
+
+console.log("Is there any dog eating an okay amount of food: ", 
+  dogs.reduce((count, dog) => (((dog.recommendedFood * 1000 * 1.1 > dog.curFood) && (dog.recommendedFood * 1000 * 0.9 < dog.curFood)) ? ++count : count), 0) > 0 ? 'true' : 'false');
+
+// 7. Create an array containing the dogs that are eating an okay amount of food (try to reuse the condition used in 6.)
+
+let dogsEatingOk = dogs.filter((dog) => (dog.recommendedFood * 1000 * 1.1 > dog.curFood) && (dog.recommendedFood * 1000 * 0.9 < dog.curFood));
+console.log("Array with dogs eating ok: ", dogsEatingOk);
+
+// 8. Create a shallow copy of the 'dogs' array and sort it by recommended food portion in an ascending order (keep in mind that the portions are inside the 
+//   array's objects 😉)
+
+const sortedDogs = dogs.map((dog) => dog).sort((a, b) => a.recommendedFood - b.recommendedFood);
+console.log(sortedDogs);
 

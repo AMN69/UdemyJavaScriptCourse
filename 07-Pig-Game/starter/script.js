@@ -14,7 +14,7 @@ holdBtn.addEventListener('click', holdScore);
 newGameBtn.addEventListener('click', gameBegins);
 
 function rollDice() {
-    const diceNumber = Math.floor(Math.random() * (6 - 1) + 1);
+    const diceNumber = Math.round(Math.random() * (6 - 1) + 1);
     console.log(diceNumber);
     switch (diceNumber) {
         case 1:
