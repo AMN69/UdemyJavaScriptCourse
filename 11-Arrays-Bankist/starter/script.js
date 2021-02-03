@@ -607,7 +607,7 @@ dogs.forEach((dog) => {
   dog.recommendedFood = Number(((dog.weight ** 0.75 * 28) / 1000).toFixed(2))
 });
 
-console.log("Dogs: ", dogs);
+console.log("1. Dogs: ", dogs);
 
 // 2. Find Sarah's dog and log to the console whether it's eating too much or too little. Hint: Some dogs have multiple owners, so you first need to find 
 // Sarah in the owners array, and so this one is a bit tricky (on purpose) 🤓
@@ -616,11 +616,19 @@ dogs.forEach((dog) => {
   const isSarahs = dog.owners.includes('Sarah');
   if (isSarahs) {
     if ((dog.curFood > dog.recommendedFood * 1000 * 0.9) && (dog.curFood < dog.recommendedFood * 1000 * 1.1)) {
-      console.log("Sarah's dog is eating rigth");
-    } else if (dog.curFood < dog.recommendedFood * 1000 * 0.9) { console.log("Sarah's dog is eating less than recommended") }
-      else { console.log("Sarah's dog is eating more than recommended") };
+      console.log("2. Sarah's dog is eating rigth");
+    } else if (dog.curFood < dog.recommendedFood * 1000 * 0.9) { console.log("2. Sarah's dog is eating less than recommended") }
+      else { console.log("2. Sarah's dog is eating more than recommended") };
   };
 });
+
+// Another way...
+
+const dogSarah = dogs.find(dog => dog.owners.includes('Sarah'));
+console.log(dogSarah);
+console.log(`Sarah's dog is eating too ${dogSarah.curFood > dogSarah.recommendedFood ? 'much' : 'little'}`);
+
+// TILL HERE - CONTINUE dogs.find(dogs.owners.includes('Sarah'))
 
 // 3. Create an array containing all owners of dogs who eat too much ('ownersEatTooMuch') and an array with all owners of dogs who eat too little 
 // ('ownersEatTooLittle').
@@ -637,8 +645,10 @@ dogs.forEach((dog) => {
   };
 });
 
-console.log("Owners eat to much: ", ownersEatTooMuch);
-console.log("Owners eat too litte: ", ownersEatTooLittle);
+console.log("3. Owners eat to much: ", ownersEatTooMuch);
+console.log("3. Owners eat too litte: ", ownersEatTooLittle);
+
+// It could be done also using filter and flatMap even though the number of lines/code would be similar.
 
 // 4. Log a string to the console for each array created in 3., like this: "Matilda and Alice and Bob's dogs eat too much!" and "Sarah and John and Michael's
 //  dogs eat too little!"
@@ -655,27 +665,27 @@ function buildStr(arr, str) {
   return stringToCon;
 };
 
-console.log(buildStr(ownersEatTooMuch, ' much!'));
-console.log(buildStr(ownersEatTooLittle, 'little!'));
+console.log("4. ", buildStr(ownersEatTooMuch, ' much!'));
+console.log("4. ", buildStr(ownersEatTooLittle, 'little!'));
 
 // 5. Log to the console whether there is any dog eating exactly the amount of food that is recommended (just true or false)
 
-console.log("Is there any dog eating exactly the amount of recommended food: ", 
+console.log("5. Is there any dog eating exactly the amount of recommended food: ", 
   dogs.reduce((count, dog) => (dog.recommendedFood * 1000 === dog.curFood ? ++count : count), 0) > 0 ? 'true' : 'false');
 
 // 6. Log to the console whether there is any dog eating an okay amount of food (just true or false)
 
-console.log("Is there any dog eating an okay amount of food: ", 
+console.log("6. Is there any dog eating an okay amount of food: ", 
   dogs.reduce((count, dog) => (((dog.recommendedFood * 1000 * 1.1 > dog.curFood) && (dog.recommendedFood * 1000 * 0.9 < dog.curFood)) ? ++count : count), 0) > 0 ? 'true' : 'false');
 
 // 7. Create an array containing the dogs that are eating an okay amount of food (try to reuse the condition used in 6.)
 
 let dogsEatingOk = dogs.filter((dog) => (dog.recommendedFood * 1000 * 1.1 > dog.curFood) && (dog.recommendedFood * 1000 * 0.9 < dog.curFood));
-console.log("Array with dogs eating ok: ", dogsEatingOk);
+console.log("7. Array with dogs eating ok: ", dogsEatingOk);
 
 // 8. Create a shallow copy of the 'dogs' array and sort it by recommended food portion in an ascending order (keep in mind that the portions are inside the 
 //   array's objects 😉)
 
 const sortedDogs = dogs.map((dog) => dog).sort((a, b) => a.recommendedFood - b.recommendedFood);
-console.log(sortedDogs);
+console.log("8. Sorted dogs: ", sortedDogs);
 
