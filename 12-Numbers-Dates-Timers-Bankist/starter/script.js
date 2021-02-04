@@ -251,3 +251,118 @@ btnSort.addEventListener('click', function (e) {
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// Examples with numbers - Section 12th - episode 168
+
+// console.log(23 === 23.0); 
+// console.log(23 == 23.0);
+// console.log(0.1 + 0.2);
+// console.log(0.1 + 0.2 === 0.3)
+// console.log(Number(23));
+// console.log(+'23');
+// console.log(Number.parseInt('39px', 10));
+// console.log(Number.parseInt('e23'));
+
+// console.log(Number.parseFloat('2.5rem'));
+// console.log(Number.parseInt('2.5rem'));
+
+// Better to check only if a value is NaN not to check numbers
+// console.log(Number.isNaN(20));
+// console.log(Number.isNaN('20'));
+// console.log(Number.isNaN(+'20X'));
+// console.log(Number.isNaN(23 / 0));
+
+
+// Best way to check if a number is a number instead of isNaN.
+// console.log(Number.isFinite(20));
+// console.log(Number.isFinite('20'));
+// console.log(Number.isFinite(+'20X'));
+// console.log(Number.isFinite(23 / 0));
+
+// console.log(Number.isInteger(23));
+// console.log(Number.isInteger(24.0));
+// console.log(Number.isInteger(23 / 0));
+
+// Examples with numbers - Section 12th - episode 169
+
+// console.log(Math.sqrt(25)); // Square root
+// console.log(25 ** (1 / 2)); // Square root
+// console.log(8 ** (1 / 3));  // Cubic root
+
+// console.log(Math.max(5, 18, 23, 11, 2));
+// console.log(Math.max(5, 18, '23', 11, 2)); // It makes parsing
+// console.log(Math.max(5, 18, '23px', 11, 2)); 
+
+// console.log(Math.min(5, 18, 23, 11, 2));
+
+// console.log(Math.PI * Number.parseFloat('10px') ** 2); //circle area
+
+// console.log(Math.trunc(Math.random() * 6) + 1); // Match.random generates a rancom number fron 0 to 0.99999 and Match.trunc removes decimals. The +1 is to get numbers from 1 to 6 otherwise we would get max to 5.
+
+// const randomInt = (min, max) => Math.floor(Math.random() * (max - min) + 1) + min; // a random number between max and min.
+// console.log(randomInt (10, 20));
+
+// console.log(Math.trunc(23.3));
+
+// console.log(Math.round(23.3));
+// console.log(Math.round(23.9));
+
+// console.log(Math.ceil('23.3')); // it works with type coertion
+// console.log(Math.ceil(23.9));
+
+// console.log(Math.floor(23.3));
+// console.log(Math.floor('23.9')); // it works with type coertion
+
+// trunc and floor get the same results with positive numbers but not with negatives ones (be careful!)
+
+// console.log(Math.trunc(-23.3)); // it gives -23
+// console.log(Math.floor(-23.3)); // it gives -24 (+23.3 gives 23)
+
+// rounding decimals
+// console.log((2.7).toFixed(0)); //string
+// console.log((2.7).toFixed(3)); //string with 3 decimals filled with zeros
+// console.log((2.345).toFixed(2)); // string with 2 decimals rounded up
+// console.log(+(2.345).toFixed(2)); // now a number with 2 decimals rounded up
+// console.log(Number((2.345).toFixed(2))); // id but with number instead of +// Examples with numbers - Section 12th - episode 168
+
+// Dates and times
+
+const now = new Date(); // current date and time
+console.log(now);
+console.log(new Date('Feb 04 2021 20:23:29 GMT+0100')); // Giving a specific date and time
+console.log(new Date('December 24, 2015')); // js writes de date without time.
+console.log(new Date(account1.movementsDates[0]));
+
+console.log(new Date(2021, 1, 4, 22, 25, 10)); // Be careful, month 1 is Feb 'cos months start by zero
+
+console.log(new Date(2021, 10, 31)); // It doesn't exist nov 31st so js sums up one day and transform to dec 1st.
+
+//dates in js starts on jan 1st 1970.
+
+console.log(new Date(0));
+
+// We can get Jan 4th 1970 like this...
+
+console.log(new Date(3 * 24 * 60 * 60 * 1000));
+
+// Getting different parts of a date
+
+const future = new Date(2037, 10, 19, 15, 23);
+console.log((future));
+console.log(future.getFullYear());
+console.log(future.getMonth());
+console.log(future.getDate()); // Day of the month
+console.log(future.getDay()); // Day of the week in number 4 = Fri
+console.log(future.getHours());
+console.log(future.getMinutes());
+console.log(future.getSeconds());
+console.log(future.toISOString()); // The date in ISO format
+console.log(future.getTime()); // The datestamp in miliseconds since Jan 1st 1970
+console.log(new Date(2142253380000)); // The miliseconds timestamp again to ISO date
+console.log(Date.now()); // current timestamp
+
+// There are set methods identical to the get methods.
+
+future.setFullYear(2040);
+console.log(future);
+
