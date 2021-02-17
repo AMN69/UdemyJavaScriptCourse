@@ -353,42 +353,57 @@ btnSort.addEventListener('click', function (e) {
 
 // Dates and times
 
-const now = new Date(); // current date and time
-console.log(now);
-console.log(new Date('Feb 04 2021 20:23:29 GMT+0100')); // Giving a specific date and time
-console.log(new Date('December 24, 2015')); // js writes de date without time.
-console.log(new Date(account1.movementsDates[0]));
+// const now = new Date(); // current date and time
+// console.log(now);
+// console.log(new Date('Feb 04 2021 20:23:29 GMT+0100')); // Giving a specific date and time
+// console.log(new Date('December 24, 2015')); // js writes de date without time.
+// console.log(new Date(account1.movementsDates[0]));
 
-console.log(new Date(2021, 1, 4, 22, 25, 10)); // Be careful, month 1 is Feb 'cos months start by zero
+// console.log(new Date(2021, 1, 4, 22, 25, 10)); // Be careful, month 1 is Feb 'cos months start by zero
 
-console.log(new Date(2021, 10, 31)); // It doesn't exist nov 31st so js sums up one day and transform to dec 1st.
+// console.log(new Date(2021, 10, 31)); // It doesn't exist nov 31st so js sums up one day and transform to dec 1st.
 
 //dates in js starts on jan 1st 1970.
 
-console.log(new Date(0));
+// console.log(new Date(0));
 
 // We can get Jan 4th 1970 like this...
 
-console.log(new Date(3 * 24 * 60 * 60 * 1000));
+// console.log(new Date(3 * 24 * 60 * 60 * 1000));
 
 // Getting different parts of a date
 
-const future = new Date(2037, 10, 19, 15, 23);
-console.log((future));
-console.log(future.getFullYear());
-console.log(future.getMonth());
-console.log(future.getDate()); // Day of the month
-console.log(future.getDay()); // Day of the week in number 4 = Fri
-console.log(future.getHours());
-console.log(future.getMinutes());
-console.log(future.getSeconds());
-console.log(future.toISOString()); // The date in ISO format
-console.log(future.getTime()); // The datestamp in miliseconds since Jan 1st 1970
-console.log(new Date(2142253380000)); // The miliseconds timestamp again to ISO date
-console.log(Date.now()); // current timestamp
+// 
 
-// There are set methods identical to the get methods.
+// Experimenting with API - Intl (international dates)
 
-future.setFullYear(2040);
-console.log(future);
+const now = new Date();
+const options = { // Formating date
+  hour: 'numeric',
+  minute: 'numeric',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  weekday: 'long',
+}
+const intnowUS = new Intl.DateTimeFormat('en-US', options).format(now); // US format date
+const intnowGB = new Intl.DateTimeFormat('en-GB').format(now); // GB format date
+const intnowCAT = new Intl.DateTimeFormat('cat-SP', options).format(now);
+console.log("intl now US: ", intnowUS);
+console.log("intl now GB: ", intnowGB);
+console.log("intl now CAT: ", intnowCAT);
 
+// Experimenting with API - Intl (international numbers)
+
+const num = 25394.45;
+
+const options2 = {
+  style: 'currency',
+  unit: 'celsius',
+  currency: 'EUR',
+}
+
+console.log('US:      ', new Intl.NumberFormat('en-US', options2).format(num));
+console.log('Germany: ', new Intl.NumberFormat('de-DE', options2).format(num));
+console.log('Syria:   ', new Intl.NumberFormat('ar-SY', options2).format(num));
+console.log(navigator.language, new Intl.NumberFormat(navigator.language, options2).format(num));
