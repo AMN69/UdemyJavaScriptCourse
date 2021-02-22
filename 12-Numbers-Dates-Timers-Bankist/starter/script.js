@@ -410,3 +410,49 @@ console.log('US:      ', new Intl.NumberFormat('en-US', options2).format(num));
 console.log('Germany: ', new Intl.NumberFormat('de-DE', options2).format(num));
 console.log('Syria:   ', new Intl.NumberFormat('ar-SY', options2).format(num));
 console.log(navigator.language, new Intl.NumberFormat(navigator.language, options2).format(num));
+
+// Experimenting setTimeOut function
+
+setTimeout((ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2}`), 3000, 'olives', 'spinach');
+console.log('Waiting...');
+
+// Experimenting setInterval
+
+const ingredients = ['ing1', 'ing2'];
+
+const pizzaTimer = setTimeout((ing1, ing2) => console.log(`Here is your pizza with ${ing1} and ${ing2}`), 3000, ...ingredients);
+console.log('Waiting...')
+if (ingredients.includes('spinach')) clearTimeout(pizzaTimer);
+// setInterval
+const options3 = {
+//year: 'numeric', month: 'numeric', day: 'numeric',
+hour: 'numeric', minute: 'numeric', second: 'numeric',
+hour12: false,
+timeZone: 'Europe/Paris'
+};
+setInterval(function () {
+const now = new Date()
+const nowInt = new Intl.DateTimeFormat('sp-SP', options3).format(now)
+console.log(nowInt)
+}, 1000);
+
+// We implement a timer (countdown timer) at the login
+// Bankist countdown
+let timer = 600 // we start at 10 minutes (600 seconds)
+const theCountDown = setInterval(function () {
+const min = String(Math.trunc(timer / 60)).padStart(2, '0');
+const sec = String(timer % 60).padStart(2, '0');
+console.log(`Counting down formatted... ${min}:${sec}`) // Code to use to manipulate DOM and show the countdown
+timer--;
+if (timer < 0) {
+stopTimer();
+};
+}, 1000);
+// We need to stop the countdown timer when the timer reaches 0 or when we login to a new user.
+function stopTimer() {
+clearInterval(theCountDown);
+};
+// we need to restart the countdown timer when the user request a loan or makes a transfer.
+function reStartTimer() {
+timer = 6;
+}
