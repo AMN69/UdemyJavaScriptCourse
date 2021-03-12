@@ -260,3 +260,38 @@ tabsContainer.addEventListener('click', function(event) {
     .add('operations__content--active') // and active the CSS that makes it appear.
   
 });
+
+// Menu fade animation
+
+const nav = document.querySelector('.nav');
+
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+    siblings.forEach(element => {
+      if (element !== link) element.style.opacity = this; // this = 0.5
+    })
+    logo.style.opacity = this; // this = 1
+  }
+}
+
+// We are passing an "argument" into handler and the argument that is 0.5 and 1 
+// could be an array in case we needed more than one parameter. On the handleHover
+// function this argument is the word this.
+
+nav.addEventListener('mouseover', handleHover.bind(0.5));  
+
+nav.addEventListener('mouseout', handleHover.bind(1));  
+
+// Sticky navigation or fixing the navbar on the top of the screen.
+const initialCoords = section1.getBoundingClientRect();
+
+window.addEventListener('scroll', function () {
+  if (window.scrollY > initialCoords.top) {
+  nav.classList.add('sticky');
+  } else {
+    nav.classList.remove('sticky');
+  }
+})
