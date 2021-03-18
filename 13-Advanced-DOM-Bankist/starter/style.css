@@ -42,8 +42,8 @@ body {
 }
 
 .section--hidden {
-  opacity: 0;
-  transform: translateY(8rem);
+  opacity: 0; /* AMN note: this CSS class hides the section and... */
+  transform: translateY(8rem); /* AMN note: Moves up 8rem the section */
 }
 
 .section__title {

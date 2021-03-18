@@ -288,10 +288,91 @@ nav.addEventListener('mouseout', handleHover.bind(1));
 // Sticky navigation or fixing the navbar on the top of the screen.
 const initialCoords = section1.getBoundingClientRect();
 
-window.addEventListener('scroll', function () {
-  if (window.scrollY > initialCoords.top) {
-  nav.classList.add('sticky');
-  } else {
-    nav.classList.remove('sticky');
-  }
+// window.addEventListener('scroll', function () {
+//   if (window.scrollY > initialCoords.top) {
+//   nav.classList.add('sticky');
+//   } else {
+//     nav.classList.remove('sticky');
+//   }
+// })
+
+// Sticky navigation through intersection observer API (better than above one)
+
+// const obsCallback = function (entries, observer) {
+//   entries.forEach(entry => {
+//     console.log(entry);
+//   })
+// }
+
+// const obsOptions = {
+//   root: null, // null option or without root option means that the viewport is observed
+//   threshold: 0.1, // 0.1 means that when 10% of the target is visible the callback function is called
+//   //threshold: [0, 0.2, 1], You can use an array and then the callback function is called in each target
+// }
+
+// const observer = new IntersectionObserver(obsCallback, obsOptions) // on 10% viewport visible the callback function is called
+// observer.observe(section1)
+
+const header = document.querySelector('.header')
+const navHeight = nav.getBoundingClientRect().height // We take the high of the nav dinamically
+
+const stickyNav = function (entries) {
+  const [entry] = entries
+  if (!entry.isIntersecting) nav.classList.add('sticky')
+  else nav.classList.remove('sticky')
+}
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`, // The nav appears 90px before the threshold really appears.
 })
+
+headerObserver.observe(header)
+
+// Reveal sections
+
+const allSections = document.querySelectorAll('.section') // We take all sections
+const revealSection = function(entries, observer) {
+  const [entry] = entries
+  if (!entry.isIntersecting) return
+  entry.target.classList.remove('section--hidden')
+  observer.unobserve(entry.target)
+}
+
+const sectionObserver = new IntersectionObserver (revealSection, {
+  root: null,
+  threshold: 0.15
+})
+
+allSections.forEach(function (section) {
+  sectionObserver.observe(section)
+  section.classList.add('section--hidden')
+})
+
+// Lazy loading images
+
+const imgTargets = document.querySelectorAll('img[data-src]') // we only select those images with low-resolution
+const loadImg = function (entries, observer) {
+  const [entry] = entries
+
+  if(!entry.isIntersecting) return
+
+  entry.target.src = entry.target.dataset.src // if we are intersecting the img we replace the low-quality one by the high-quality one
+  // We remove the blur once the image is loaded. We could instead 
+  // remove the lazy-img directly just when intersecting but in case the
+  // quality of the connection was, for example 3G we will see that the
+  // image would take a long time to load with 100% quality.
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  
+    observer.unobserve(entry.target)
+  })
+}
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px' // We want the images to upload and remove the blur time before we reach the area where they are placed
+})
+
+imgTargets.forEach(img => imgObserver.observe(img))
