@@ -393,7 +393,7 @@ const intnowUS = new Intl.DateTimeFormat('en-US', options).format(now); // US fo
 const intnowGB = new Intl.DateTimeFormat('en-GB').format(now); // GB format date
 const intnowCAT = new Intl.DateTimeFormat('cat-SP', options).format(now);
 console.log("intl now US: ", intnowUS);
-console.log("intl now GB: ", intnowGB);
+console.log("intl now GB: ", intnow
 console.log("intl now CAT: ", intnowCAT);
 
 // Experimenting with API - Intl (international numbers)

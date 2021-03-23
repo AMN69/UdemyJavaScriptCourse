@@ -376,3 +376,105 @@ const imgObserver = new IntersectionObserver(loadImg, {
 })
 
 imgTargets.forEach(img => imgObserver.observe(img))
+
+// Slider
+
+const slider = function () {
+  const slides = document.querySelectorAll('.slide') // AMN - There are three slide classes 
+  const btnLeft = document.querySelector('.slider__btn--left')
+  const btnRight = document.querySelector('.slider__btn--right')
+  const dotContainer = document.querySelector('.dots')
+
+  let curSlide = 0;
+  const maxSlide = slides.length // Max number slides we can go right
+
+  //Functions
+  const createDots = function () {
+    slides.forEach(function(_, index) {
+      dotContainer
+        .insertAdjacentHTML('beforeend', `<button class="dots__dot" data-slide="${index}"></button>`)
+    })
+  }
+
+  const goToSlide = function(toSlide) { // Goes to the slide passed
+    slides
+      .forEach((slide, index) => (slide.style.transform = `translateX(${100 * (index - toSlide)}%)`)
+  )}
+
+  const activateDot = function(slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'))
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active')
+  }
+
+  // Next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) { // We can go right till max slides - 1 (array starts at zero)
+      curSlide = 0
+    } else {
+      curSlide++
+    }
+
+    goToSlide(curSlide)
+    activateDot(curSlide)
+  }
+
+  const prevSlide = function () {
+    if (curSlide === 0) { // We can go left till reach slide 0 (really is the first one)
+      curSlide = maxSlide - 1
+    } else {
+      curSlide--
+    }
+    
+    goToSlide(curSlide)
+    activateDot(curSlide)
+  }
+
+  // Initialize function
+
+  const init = function() {
+    goToSlide(0)
+    createDots()
+    activateDot(0)
+  }
+  init()
+
+  // Event handlers
+
+  btnLeft.addEventListener('click', prevSlide) // Listening arrow left
+  btnRight.addEventListener('click', nextSlide) // Listening arrow rigth
+
+  document.addEventListener('keydown', function (event) {
+    event.key === 'ArrowLeft' && prevSlide() // Listening keyboard arrow left
+    event.key === 'ArrowRight' && nextSlide() // Listening keyboard arrow right
+  })
+
+  dotContainer.addEventListener('click', function(event) {
+    if (event.target.classList.contains('dots__dot')) {
+      const {slide} = event.target.dataset // takes from index.html the dataset slide
+      goToSlide(slide)
+      activateDot(slide)
+    }
+  })
+}
+
+slider()
+
+// DOMContentLoaded is the first event that happens when a page is loaded.
+
+document.addEventListener('DOMContentLoaded', function(event) {
+  console.log('HTML parsed and DOM tree built!', event);
+})
+
+window.addEventListener('load', function(event) {
+  console.log('Pagen fully loaded', event);
+})
+
+// window.addEventListener('beforeunload', function(event) {
+//   event.preventDefault()
+//   console.log(event);
+//   event.returnValue = ''
+// })
