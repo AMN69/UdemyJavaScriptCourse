@@ -318,3 +318,353 @@ console.log(car2b.speedMph)
 car1b.make = 'Ford' // AMN - be careful! We can't do car1b.make('Ford'), we use it as a variable not a function.
 console.log("Now is a ", car1b.make);
 
+// Inheritance between classes
+
+const Persona = function (firstName, birthYear) {
+  this.firstName = firstName;
+  this.birthYear = birthYear;
+};
+
+Persona.prototype.calcAge = function () {
+  console.log(2037 - this.birthYear);
+}
+
+const Student = function (firstName, birthYear, course) {
+  Persona.call(this, firstName, birthYear) // allows us to call Persona and use this received fisrName and birthYear on Persona
+  this.course = course
+}
+
+Student.prototype = Object.create(Persona.prototype) // here the Student proto inherits (links) Persona proto
+
+Student.prototype.introduce = function () {
+  console.log(`My name is ${this.firstName} and I study ${this.course}`)
+}
+
+const mike = new Student('Mike', 2020, 'Computer Science')
+mike.introduce()
+console.log(mike);
+mike.calcAge();
+
+console.log(mike.__proto__); // it has method introduce that mike has on its own
+console.log(mike.__proto__.__proto__); // it has method calcAge that mikes inherits from Persona
+
+console.log(mike instanceof Student); // true
+console.log(mike instanceof Persona); // true
+console.log(mike instanceof Object); // true
+
+// Code challenge #3
+
+const Carbis = function (make, speed) {
+  this.make = make
+  this.speed = speed
+}
+
+Carbis.prototype.accelerate = function () { // Method outside constructor object to avoid performance issues
+  if (this.speed + 10 > 250) {
+    this.speed = 250
+    console.log("We can overpass 250km/h, now speed is: ", this.speed);
+  } else {
+    this.speed = this.speed + 10
+    console.log("New speed: ", this.speed);
+  }
+}
+
+Carbis.prototype.brake = function () {
+  if (this.speed - 5 < 0) {
+    this.speed = 0
+    console.log("The car is stopped now, leave the brakes!");
+  } else {
+    this.speed = this.speed - 5
+    console.log("New speed: ", this.speed);
+  }
+}
+
+const CarEV = function (make, speed, charge) {
+  Carbis.call(this, make, speed)
+  this.charge = charge
+}
+
+CarEV.prototype = Object.create(Carbis.prototype)
+
+CarEV.prototype.chargeBattery = function(chargeTo) {
+  if (chargeTo > 99) {
+    this.charge = 100
+    console.log("Battery fully charged");
+  }  else {
+    this.charge = chargeTo
+  }
+}
+
+CarEV.prototype.accelerate = function() { // We override parent accelerate (both exist but first in the chain is this one)
+  this.charge = this.charge - 1
+  if (this.charge < 1) {
+    this.charge = 0
+    this.speed = 0
+    console.log("You ran out of battery and the car was stopped")
+    return
+  }
+  if (this.speed + 20 > 250) {
+    this.speed = 250
+    console.log("We can overpass 250km/h, now speed is: ", this.speed);
+  } else {
+    this.speed = this.speed + 20
+    console.log("New speed: ", this.speed);
+  }
+  console.log("...and battery charge is: ", this.charge);
+}
+
+console.log("-------- We start with carEV version -------");
+const car1bEV = new CarEV('Nissan', 0, 90)
+console.log(car1bEV);
+
+car1bEV.brake();
+car1bEV.accelerate();
+car1bEV.accelerate();
+car1bEV.brake()
+car1bEV.brake()
+car1bEV.brake()
+car1bEV.brake()
+car1bEV.brake()
+car1bEV.accelerate()
+car1bEV.chargeBattery(100)
+car1bEV.accelerate()
+
+// Inheritance between ES6 classes
+
+class PersonClb { // We define Person as before but to distinguish and avoid conflic with PersonCl
+  constructor(fullName, birthYear) {
+    this.fullName = fullName
+    this.birthYear = birthYear
+  }
+
+  // This instance methods will be added to the .prototype property (except the one with static keyword)
+  calcAge() { // This method will be in the .prototype property 
+    console.log(2037 - this.birthYear);
+  }
+
+  get age() { // getter for classes (for objects see some lines below)
+    return 2037 - this.birthYear
+  }
+
+  set fullName(name) {
+    if (name.includes(' ')) {
+      this._fullName = name // by convention when there is a setter and getter for a property with the setter or setter goes with a '_' as a first char otherwise it doesn't work
+    } else {
+      return alert('Not a full name!')
+    }
+  }
+  get fullname() {
+    return this._fullName // by convention when there is a setter and getter for a property within the getter or setter goes with '_' as a first char otherwise it doesn't work
+  }
+
+  // This is a static method and can't be used on the objects created only can be called as a function on the PersonCl
+  static hey() {
+    console.log("Hey there!!!");
+    console.log(this);
+  }
+}
+
+// In case we didn't have new variables we could simple write this:
+// class StudentCl extends PersonClb {
+//
+// }
+
+class StudentCl extends PersonClb {
+  constructor(fullName, birthYear, course) {
+    super(fullName, birthYear) // super always first and then the new variables
+    this.course = course
+  }
+
+  introduce() {
+    console.log(`My name is ${this._fullName} and I study ${this.course}`)  
+  }
+
+  calcAge() {
+    console.log("This is a new calcage method overwriting the proto one");
+  }
+}
+
+const martha = new StudentCl('Martha Jones', 2012, 'Computer Science')
+martha.introduce()
+martha.calcAge()
+
+// Inheritance and Object.create
+
+console.log("Now inheritance and Object.create");
+const PersonProtoBis = {
+  calcAge() {
+    console.log(2037 - this.birthYear)
+  },
+
+  init(firstName, birthYear) { // NOT a constructor. This is only a way to define properties
+    this.firstName = firstName
+    this.birthYear = birthYear
+  },
+}
+
+const steven2 = Object.create(PersonProtoBis) // Steven object inherits PersonProtoBis method and properties
+
+const StudentProto = Object.create(PersonProtoBis) // StudentProto inherits PersonProtoBis method and properties
+StudentProto.init = function(firstName, birthYear, course) {
+  PersonProtoBis.init.call(this, firstName, birthYear)
+  this.course = course
+}
+
+StudentProto.introduce = function () {
+    console.log(`My name is ${this.firstName} and I study ${this.course}`) 
+}
+const jay2 = Object.create(StudentProto) // Jay object inherits StudentProto and PersonProtoBis methods and properties
+jay2.init('Jay', 2010, 'Computer Science')
+jay2.introduce()
+jay2.calcAge();
+
+// New class example
+
+class Account {
+  constructor(owner, currency, pin) {
+    this.owner = owner
+    this.currency = currency
+    this.pin = pin
+    this.movements = [] // You can initialize new properties w/o passing them through the constructor
+    this.locale = navigator.language
+    console.log("Thanks for opening this account ", owner); // or even put this
+  }
+
+  deposit(val) {
+    this.movements.push(val)
+  }
+
+  withdraw(val) {
+    this.deposit(-val)
+  }
+
+  approveLoan(val) {
+    return true
+  }
+
+  requestLoan(val) {
+    if (this.approveLoan(val)) {
+      this.deposit(val)
+      console.log('Loan approved');
+    }
+  }
+}
+
+const acc1 = new Account('Andreu', 'EUR', 1111)
+acc1.deposit(250)
+acc1.withdraw(140)
+acc1.requestLoan(1000)
+console.log(acc1);
+
+// Code challenge #4
+
+class CarCl4 {
+  
+  constructor(make, speed, charge) {
+    this.make = make
+    this.speed = speed
+    this.#charge = charge
+    console.log(`You have your ${make} ready at ${speed} km/h with a battery level of ${charge}`);
+  }
+
+  #charge; // private property
+
+
+  accelerate () { 
+    this.#charge - 5 < 1 ? this.#charge = 0 : this.#charge -= 5
+    this.speed + 10 > 250 ? this.speed = 250 : this.speed += 10
+
+    this.#charge !== 0 ? console.log(`Accelerate - Now you are running the car at ${this.speed} km/h with a battery level of ${this.#charge}%`) : console.log(`Your car stopped due you ran out of battery`);
+
+    return this
+  }
+
+  brake() {
+    console.log("Brake - this speed: ", this.speed);
+
+    this.speed - 5 < 0 ? this.speed = 0 : this.speed -= 5
+    this.speed === 0 ? console.log(`The car is stopped now, leave the brakes!`) : console.log(`Brake - Now you are running the car at ${this.speed} km/h with a battery level of ${this.#charge}%`)
+    
+    return this
+  }
+
+  chargeBattery(chargeTo) {
+    if (chargeTo > 99) {
+      this.#charge = 100
+      console.log("Battery fully charged");
+    }  else {
+      this.#charge = chargeTo
+    }
+
+    return this
+  }
+}
+
+console.log("-------- We start with carCl4 version -------");
+const myCar = new CarCl4('Nissan', 0, 90)
+console.log(myCar);
+
+myCar.brake().accelerate().accelerate().brake().chargeBattery(100)
+
+// myCar.brake();
+// myCar.accelerate();
+// myCar.accelerate();
+// myCar.brake()
+// myCar.brake()
+// myCar.brake()
+// myCar.brake()
+// myCar.brake()
+// myCar.accelerate()
+// myCar.chargeBattery(100)
+// myCar.accelerate()
+// myCar.chargeBattery(100)
+
+// const CarEV2 = function (make, speed, charge) {
+//   Carbis2.call(this, make, speed)
+//   this.charge = charge
+// }
+
+// CarEV2.prototype = Object.create(Carbis2.prototype)
+
+// CarEV2.prototype.chargeBattery = function(chargeTo) {
+//   if (chargeTo > 99) {
+//     this.charge = 100
+//     console.log("Battery fully charged");
+//   }  else {
+//     this.charge = chargeTo
+//   }
+// }
+
+// CarEV2.prototype.accelerate = function() { // We override parent accelerate (both exist but first in the chain is this one)
+//   this.charge = this.charge - 1
+//   if (this.charge < 1) {
+//     this.charge = 0
+//     this.speed = 0
+//     console.log("You ran out of battery and the car was stopped")
+//     return
+//   }
+//   if (this.speed + 20 > 250) {
+//     this.speed = 250
+//     console.log("We can overpass 250km/h, now speed is: ", this.speed);
+//   } else {
+//     this.speed = this.speed + 20
+//     console.log("New speed: ", this.speed);
+//   }
+//   console.log("...and battery charge is: ", this.charge);
+// }
+
+// console.log("-------- We start with carEV2 version -------");
+// const car1bEV2 = new CarEV2('Nissan', 0, 90)
+// console.log(car1bEV2);
+
+// car1bEV.brake();
+// car1bEV.accelerate();
+// car1bEV.accelerate();
+// car1bEV.brake()
+// car1bEV.brake()
+// car1bEV.brake()
+// car1bEV.brake()
+// car1bEV.brake()
+// car1bEV.accelerate()
+// car1bEV.chargeBattery(100)
+// car1bEV.accelerate()
