@@ -70,29 +70,13 @@ class App {
 
     _newWorkout(event) {       
         event.preventDefault();
+        if (!this._isDataOk()) return;
+
         const { lat, lng} = this.#mapEvent.latlng
         if (inputType.value === 'running') {
-            console.log("You clicked on running event");
-            const newRunning = new Running(
-                inputDistance.value, 
-                inputDuration.value, 
-                [lat, lng], 
-                inputElevation.value, 
-                inputCadence.value)
-            this.#workouts.push(newRunning);
-            console.log("New Running: ", newRunning);
-            console.log("Current app: ", myApp);
+            this._newRunning(lat, lng);
         } else {
-            console.log("You clicked on cycling event");
-            const newCycling = new Cycling(
-                inputDistance.value, 
-                inputDuration.value, 
-                [lat, lng], 
-                inputElevation.value, 
-                inputCadence.value)
-            this.#workouts.push(newCycling);
-            console.log("New Cycling: ", newCycling);
-            console.log("Current app: ", myApp);
+            this._newCycling(lat, lng);
         }
         L.marker([lat, lng]).addTo(this.#map)
         .bindPopup(
@@ -103,15 +87,77 @@ class App {
             closeOnClick: false,
             className: 'running-popup',
         }))
-        .setPopupContent('Workout')
+        .setPopupContent(`${inputType.value === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
         .openPopup();
         inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''; // We need to clear the form fields
+        form.classList.add('hidden');
+    }
+
+    _isDataOk() {
+        const distance = parseFloat(inputDistance.value);
+        const duration = parseFloat(inputDuration.value);
+        const cadence = parseFloat(inputCadence.value);
+        const elevation = parseFloat(inputElevation.value);
+        
+        if (isNaN(distance)) {
+            alert('Distance must be a valid number.')
+            return false;
+        }
+        if (distance <= 0) {
+            alert('Distance must be greater than 0');
+            return false;
+        } 
+        if (isNaN(duration)) {
+            alert('Duration must be a valid number.')
+            return false;
+        }
+        if (duration <= 0) {
+            alert('Duration must be greater than 0');
+            return false;
+        }
+        if (inputType.value === 'running' && isNaN(cadence)) {
+            alert('Cadence must be a valid number.')
+            return false;
+        }
+        if (inputType.value === 'running' && cadence <= 0) {
+            alert('Cadence must be greater than 0');
+            return false;
+        }
+        if (inputType.value === 'cycling' && isNaN(elevation)) {
+            alert('Elevation gain must be a valid number.')
+            return false;
+        }
+        return true;
+    }
+
+    _newRunning(lat, lng) {
+        console.log("You clicked on running event");
+        const newRunning = new Running(
+            inputDistance.value, 
+            inputDuration.value, 
+            [lat, lng], 
+            inputCadence.value)
+        this.#workouts.push(newRunning);
+        console.log("New Running: ", newRunning);
+        console.log("Current app: ", myApp);
+    }
+
+    _newCycling(lat, lng) {
+        console.log("You clicked on cycling event");
+        const newCycling = new Cycling(
+            inputDistance.value, 
+            inputDuration.value, 
+            [lat, lng], 
+            inputElevation.value)
+        this.#workouts.push(newCycling);
+        console.log("New Cycling: ", newCycling);
+        console.log("Current app: ", myApp);
     }
 }
 
 class Workout {
-    #id;
-    #date;
+    id = (Date.now() + '').slice(-10); // AMN - Solution to get by. In reality we should look for a way to get a unique id.
+    date = new Date();
 
     constructor(distance, duration, coords) {
         this.distance = distance;
@@ -123,22 +169,30 @@ class Workout {
 class Running extends Workout {
     #name;
 
-    constructor(distance, duration, coords, cadence, pace) {
+    constructor(distance, duration, coords, cadence) {
         super(distance, duration, coords);
         this.cadence = cadence;
-        this.pace = pace;
+        this.calcPace();
     }
 
-    
+    calcPace() {
+        this.pace = this.duration / this.distance;
+        return this.pace;
+    }
 }
 
 class Cycling extends Workout {
     #name;
 
-    constructor(distance, duration, coords, elevationGain, speed) {
+    constructor(distance, duration, coords, elevationGain) {
         super(distance, duration, coords);
         this.elevationGain = elevationGain;
-        this.speed = speed;
+        this.calcSpeed();
+    }
+
+    calcSpeed() {
+        this.speed = this.distance / (this.duration / 60)
+        return this.speed;
     }
 }
 
