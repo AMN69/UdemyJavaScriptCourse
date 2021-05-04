@@ -73,24 +73,30 @@ class App {
         if (!this._isDataOk()) return;
 
         const { lat, lng} = this.#mapEvent.latlng
+        let workout = {};
         if (inputType.value === 'running') {
-            this._newRunning(lat, lng);
+            workout = this._newRunning(lat, lng);
         } else {
-            this._newCycling(lat, lng);
+            workout = this._newCycling(lat, lng);
         }
-        L.marker([lat, lng]).addTo(this.#map)
+        this._renderingWorkout(workout); // not necessary bind because it's NOT a callback function and we call the function with this keyword
+        
+        inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''; // We need to clear the form fields
+        form.classList.add('hidden');
+    }
+
+    _renderingWorkout(workout) {
+        L.marker(workout.coords).addTo(this.#map)
         .bindPopup(
             L.popup({ // Leaflet map popup (as well as other components) are configurable - see documentation
             maxWidth: 250,
             minWidth: 100,
             autoClose: false,
             closeOnClick: false,
-            className: 'running-popup',
+            className: `${workout.type}-popup`,
         }))
-        .setPopupContent(`${inputType.value === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
+        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
         .openPopup();
-        inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''; // We need to clear the form fields
-        form.classList.add('hidden');
     }
 
     _isDataOk() {
@@ -132,26 +138,28 @@ class App {
 
     _newRunning(lat, lng) {
         console.log("You clicked on running event");
-        const newRunning = new Running(
-            inputDistance.value, 
-            inputDuration.value, 
+        const newWorkout = new Running(
+            parseFloat(inputDistance.value), 
+            parseFloat(inputDuration.value), 
             [lat, lng], 
-            inputCadence.value)
-        this.#workouts.push(newRunning);
-        console.log("New Running: ", newRunning);
+            parseFloat(inputCadence.value))
+        this.#workouts.push(newWorkout);
+        console.log("New Running: ", newWorkout);
         console.log("Current app: ", myApp);
+        return newWorkout;
     }
 
     _newCycling(lat, lng) {
         console.log("You clicked on cycling event");
-        const newCycling = new Cycling(
-            inputDistance.value, 
-            inputDuration.value, 
+        const newWorkout = new Cycling(
+            parseFloat(inputDistance.value), 
+            parseFloat(inputDuration.value), 
             [lat, lng], 
-            inputElevation.value)
-        this.#workouts.push(newCycling);
-        console.log("New Cycling: ", newCycling);
+            parseFloat(inputElevation.value))
+        this.#workouts.push(newWorkout);
+        console.log("New Cycling: ", newWorkout);
         console.log("Current app: ", myApp);
+        return newWorkout;
     }
 }
 
@@ -167,7 +175,7 @@ class Workout {
 }
 
 class Running extends Workout {
-    #name;
+    type = 'running';
 
     constructor(distance, duration, coords, cadence) {
         super(distance, duration, coords);
@@ -182,7 +190,7 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
-    #name;
+    type = 'cycling';
 
     constructor(distance, duration, coords, elevationGain) {
         super(distance, duration, coords);
