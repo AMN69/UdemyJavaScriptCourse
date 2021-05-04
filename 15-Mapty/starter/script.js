@@ -1,7 +1,6 @@
 'use strict';
 
-// prettier-ignore
-// const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
@@ -62,6 +61,12 @@ class App {
         form.classList.remove('hidden');
         inputDistance.focus();
     }
+
+    _hideForm() {
+        form.style.display = 'none';
+        form.classList.add('hidden');
+        setTimeout(() => (form.style.display = 'grid'), 1000);
+    }
     
     _toggleElevationField() { // We listen when the type of workout changes
         inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
@@ -82,7 +87,8 @@ class App {
         this._renderingWorkout(workout); // not necessary bind because it's NOT a callback function and we call the function with this keyword
         
         inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''; // We need to clear the form fields
-        form.classList.add('hidden');
+        this._hideForm();        
+        this._listingWorkout(workout)
     }
 
     _renderingWorkout(workout) {
@@ -95,8 +101,60 @@ class App {
             closeOnClick: false,
             className: `${workout.type}-popup`,
         }))
-        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
+        .setPopupContent(workout.message)                                        
         .openPopup();
+    }
+
+    _listingWorkout(workout) {
+        let htmlWorkouts = '';
+        
+        htmlWorkouts = htmlWorkouts + 
+        `
+        <li class="workout workout--${workout.type === 'Running' ? 'running' : 'cycling'}" data-id=${workout.id}>
+            <h2 class="workout__title">${workout.message}</h2>
+            <div class="workout__details">
+                <span class="workout__icon">${workout.type === 'Running' ? '🏃‍♂️' : '🚴‍♀️'}</span>
+                <span class="workout__value">${workout.distance.toFixed(2)}</span>
+                <span class="workout__unit">km</span>
+            </div>
+            <div class="workout__details">
+                <span class="workout__icon">⏱</span>
+                <span class="workout__value">${workout.duration.toFixed(2)}</span>
+                <span class="workout__unit">min</span>
+            </div>
+        `
+        if (workout.type === 'Running') {
+            htmlWorkouts = htmlWorkouts +
+            `
+            <div class="workout__details">
+                <span class="workout__icon">⚡️</span>
+                <span class="workout__value">${workout.pace.toFixed(2)}</span>
+                <span class="workout__unit">min/km</span>
+            </div>
+            <div class="workout__details">
+                <span class="workout__icon">🦶🏼</span>
+                <span class="workout__value">${workout.cadence.toFixed(2)}</span>
+                <span class="workout__unit">spm</span>
+            </div>
+            `
+        } else {
+            htmlWorkouts = htmlWorkouts +
+            `
+                <div class="workout__details">
+                    <span class="workout__icon">⚡️</span>
+                    <span class="workout__value">${workout.speed.toFixed(2)}</span>
+                    <span class="workout__unit">km/h</span>
+                </div>
+                <div class="workout__details">
+                    <span class="workout__icon">🦶🏼</span>
+                    <span class="workout__value">${workout.elevationGain.toFixed(2)}</span>
+                    <span class="workout__unit">m</span>
+                </div>
+            </li>
+            `
+        }
+        form.insertAdjacentHTML('afterend', htmlWorkouts); // AMN - adds workouts after the form
+        console.log("I'm injecting...");
     }
 
     _isDataOk() {
@@ -172,15 +230,24 @@ class Workout {
         this.duration = duration;
         this.coords = coords;
     }
+
+    settingWorkoutMsg(type) {
+        if (type === 'Running') {
+            return `${type} 🏃‍♂️ on ${months[this.date.getMonth()]} ${this.date.getDate()}`
+        } else {
+            return `${type} 🚴‍♀️ on ${months[this.date.getMonth()]} ${this.date.getDate()}`
+        }
+    }
 }
 
 class Running extends Workout {
-    type = 'running';
+    type = 'Running';
 
     constructor(distance, duration, coords, cadence) {
         super(distance, duration, coords);
         this.cadence = cadence;
         this.calcPace();
+        this.message = this.settingWorkoutMsg(this.type);
     }
 
     calcPace() {
@@ -190,12 +257,13 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
-    type = 'cycling';
+    type = 'Cycling';
 
     constructor(distance, duration, coords, elevationGain) {
         super(distance, duration, coords);
         this.elevationGain = elevationGain;
         this.calcSpeed();
+        this.message = this.settingWorkoutMsg(this.type);
     }
 
     calcSpeed() {
