@@ -24,6 +24,7 @@ class App {
         this._getPosition(); // AMN - This is like an event and detects the current position of the user  
         inputType.addEventListener('change', this._toggleElevationField)
         form.addEventListener('submit', this._newWorkout.bind(this)); // We listen when the form is submitted
+        containerWorkouts.addEventListener('click', this._moveMapToWorkout.bind(this)); // We listen when a workout is clicked on the sidebar
     }
 
     // AMN - explanation about why we use bind to make things work.
@@ -41,6 +42,17 @@ class App {
         }
     }
 
+    _getWorkoutsFromLocalStorage () {        
+        const data = JSON.parse(localStorage.getItem('allWorkouts'));
+        if (!data) return;
+
+        this.#workouts = data;
+        this.#workouts.forEach(workout => 
+            { this._listingWorkout(workout)
+              this._renderingWorkout(workout)
+            });
+    }
+
     _loadMap(position) {
         const { latitude, longitude } = position.coords;
         const coords = [latitude, longitude]; // We need an array.
@@ -54,6 +66,7 @@ class App {
             .bindPopup('Your place')
             .openPopup();
         this.#map.on('click', this._showForm.bind(this)) // AMN - puts the cursor on the form field. We call the function and passing the myApp object otherwise _loadMap wouldn't be able to use object vars. See also: https://stackoverflow.com/questions/2236747/what-is-the-use-of-the-javascript-bind-method
+        this._getWorkoutsFromLocalStorage(); // AMN - only when the map is rendered can we get localStorage workouts and render them
     }
 
     _showForm(mapE) {
@@ -89,6 +102,34 @@ class App {
         inputDistance.value = inputCadence.value = inputDuration.value = inputElevation.value = ''; // We need to clear the form fields
         this._hideForm();        
         this._listingWorkout(workout)
+    }
+
+    _moveMapToWorkout(event) {
+        // BUGFIX: When we click on a workout before the map has loaded, we get an error. But there is an easy fix:
+        if (!this.#map) return;
+
+        // AMN - select the closest element with workout class on the HTML the user clicked on the page
+        const workoutEl = event.target.closest('.workout'); 
+
+        if (!workoutEl) return;
+
+        // AMN - important note. By adding the data-id to the HTML element we can now look for the id on the #workouts array.
+        const workout = this.#workouts.find(
+        work => work.id === workoutEl.dataset.id // AMN - dataset is used in HTML to define a data with info. In this case data-id
+        );
+
+        this.#map.setView(workout.coords, this.#mapZoomLevel, { // AMN - Leaflet method to center a map on a point (with coordenates)
+            animate: true,
+            pan: {
+                duration: 1,
+            },
+        });
+        // AMN - We can't use workout.click() function because once we keep the 
+        // workouts in the localStorage the objects are lost. If we wanted to be able
+        // to use this we should rebuild all the workouts takins into account their
+        // type, be there running or cycling.
+        // Object coming from localStorage doesn't have these methods.
+        //workout.click(); 
     }
 
     _renderingWorkout(workout) {
@@ -154,7 +195,6 @@ class App {
             `
         }
         form.insertAdjacentHTML('afterend', htmlWorkouts); // AMN - adds workouts after the form
-        console.log("I'm injecting...");
     }
 
     _isDataOk() {
@@ -195,35 +235,40 @@ class App {
     }
 
     _newRunning(lat, lng) {
-        console.log("You clicked on running event");
         const newWorkout = new Running(
             parseFloat(inputDistance.value), 
             parseFloat(inputDuration.value), 
             [lat, lng], 
             parseFloat(inputCadence.value))
-        this.#workouts.push(newWorkout);
-        console.log("New Running: ", newWorkout);
-        console.log("Current app: ", myApp);
+        this._keepWorkouts(newWorkout);
         return newWorkout;
     }
 
     _newCycling(lat, lng) {
-        console.log("You clicked on cycling event");
         const newWorkout = new Cycling(
             parseFloat(inputDistance.value), 
             parseFloat(inputDuration.value), 
             [lat, lng], 
             parseFloat(inputElevation.value))
-        this.#workouts.push(newWorkout);
-        console.log("New Cycling: ", newWorkout);
-        console.log("Current app: ", myApp);
+        this._keepWorkouts(newWorkout);
         return newWorkout;
+    }
+
+    _keepWorkouts(workout) {
+        this.#workouts.push(workout);
+        localStorage.setItem('allWorkouts', JSON.stringify(this.#workouts));
+    } 
+
+    reset () {
+        localStorage.removeItem('allWorkouts'); // AMN - we reset localStorage.
+        location.reload(); // AMN - we reload the entire page. 
     }
 }
 
 class Workout {
     id = (Date.now() + '').slice(-10); // AMN - Solution to get by. In reality we should look for a way to get a unique id.
     date = new Date();
+    //clicks = 0;
 
     constructor(distance, duration, coords) {
         this.distance = distance;
@@ -238,6 +283,10 @@ class Workout {
             return `${type} 🚴‍♀️ on ${months[this.date.getMonth()]} ${this.date.getDate()}`
         }
     }
+
+    // click() {
+    //     this.clicks = this.clicks + 1;
+    // }
 }
 
 class Running extends Workout {
@@ -273,6 +322,3 @@ class Cycling extends Workout {
 }
 
 const myApp = new App();
-console.log("This is myApp: ", myApp);
-
-
