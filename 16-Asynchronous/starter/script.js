@@ -40,51 +40,51 @@ const countriesContainer = document.querySelector('.countries');
 
 // AMN - Now we are going to chain several calls one after another, only calling a next call when current has finished
 
-const renderCountry = function(data, className = '') {
-    const html = `
-            <article class="country ${className}">
-                <img class="country__img" src="${data.flag}" />
-                <div class="country__data">
-                    <h3 class="country__name">${data.name}</h3>
-                    <h4 class="country__region">${data.region}</h4>
-                    <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
-                    <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
-                    <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
-                </div>
-                </article>
-        `;
-        countriesContainer.insertAdjacentHTML('beforeend', html)
-}
+// const renderCountry = function(data, className = '') {
+//     const html = `
+//             <article class="country ${className}">
+//                 <img class="country__img" src="${data.flag}" />
+//                 <div class="country__data">
+//                     <h3 class="country__name">${data.name}</h3>
+//                     <h4 class="country__region">${data.region}</h4>
+//                     <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
+//                     <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+//                     <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+//                 </div>
+//                 </article>
+//         `;
+//         countriesContainer.insertAdjacentHTML('beforeend', html)
+// }
 
-const renderError = function (msg) {
-    countriesContainer.insertAdjacentText('beforeend', msg);
-}
+// const renderError = function (msg) {
+//     countriesContainer.insertAdjacentText('beforeend', msg);
+// }
 
-const getCountryAndNeighbour = function(country) {
-    const request = new XMLHttpRequest();
-    request.open('GET', `https://restcountries.eu/rest/v2/name/${country}`);
-    request.send();
+// const getCountryAndNeighbour = function(country) {
+//     const request = new XMLHttpRequest();
+//     request.open('GET', `https://restcountries.eu/rest/v2/name/${country}`);
+//     request.send();
 
-    request.addEventListener('load', function () {
-        const [data] = JSON.parse(this.responseText);
-        console.log(data);
-        // AMN - first the first country
-        renderCountry(data);
-        // AMN - Then we get the neighbour country 
-        const [neighbour] = data.borders;
-        if(!neighbour) return; // AMN - Some countries doens't have neighbours
-        // AMN - Then we call the neighbour
-        const request2 = new XMLHttpRequest();
-        request2.open('GET', `https://restcountries.eu/rest/v2/alpha/${neighbour}`)
-        request2.send();
+//     request.addEventListener('load', function () {
+//         const [data] = JSON.parse(this.responseText);
+//         console.log(data);
+//         // AMN - first the first country
+//         renderCountry(data);
+//         // AMN - Then we get the neighbour country 
+//         const [neighbour] = data.borders;
+//         if(!neighbour) return; // AMN - Some countries doens't have neighbours
+//         // AMN - Then we call the neighbour
+//         const request2 = new XMLHttpRequest();
+//         request2.open('GET', `https://restcountries.eu/rest/v2/alpha/${neighbour}`)
+//         request2.send();
 
-        request2.addEventListener('load', function() {
-            const data2 = JSON.parse(this.responseText)
-            console.log(data2);
-            renderCountry(data2, 'neighbour');
-        })
-    })
-}
+//         request2.addEventListener('load', function() {
+//             const data2 = JSON.parse(this.responseText)
+//             console.log(data2);
+//             renderCountry(data2, 'neighbour');
+//         })
+//     })
+// }
 
 //getCountryAndNeighbour('portugal')
 //getCountryAndNeighbour('usa')
@@ -109,13 +109,13 @@ const getCountryAndNeighbour = function(country) {
 // AMN - important note. The 'then' always returns a promise. In the case of response.json() the result
 // is return and catch in 'data' in the next 'then'. 
 
-const getJSON = function(url, errorMsg = 'Something went wrong') {
-    return fetch(url).then(response => {
-        if(!response.ok)
-            throw new Error(`${errorMsg} (${response.status})`) // AMn - own error
-        return response.json()
-    }
-)}
+// const getJSON = function(url, errorMsg = 'Something went wrong') {
+//     return fetch(url).then(response => {
+//         if(!response.ok)
+//             throw new Error(`${errorMsg} (${response.status})`) // AMn - own error
+//         return response.json()
+//     }
+// )}
 
 // const getCountryData = function (country) {
 //     // Country 1
@@ -143,31 +143,31 @@ const getJSON = function(url, errorMsg = 'Something went wrong') {
 //     })
 // };
 
-const getCountryData = function (country) {
-    // Country 1
-    getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
-    .then(data => {
-        renderCountry(data[0]);
-        const neighbour = data[0].borders[0];
+// const getCountryData = function (country) {
+//     // Country 1
+//     getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
+//     .then(data => {
+//         renderCountry(data[0]);
+//         const neighbour = data[0].borders[0];
         
-        if (!neighbour) throw new Error('No neighbour found!');
+//         if (!neighbour) throw new Error('No neighbour found!');
 
-        // Country 2
-        return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found') // AMN - 2nd promise. The response is a promise as well that we have to manage.   
-    })
-    .then(data => renderCountry(data, 'neighbour'))
-    .catch(err => {
-        console.error(`${err} 💥 💥 💥`)
-        renderError(`Something went wrong 💥 💥 💥 ${err.message}. Try again`)
-    }) // AMN - catches errors - Catch itself returns a promise as well.
-    .finally(() => { // AMN - it doesn't matter whether the promise is fullfilled or rejected this will be always executed
-        countriesContainer.style.opacity = 1;
-    })
-};
+//         // Country 2
+//         return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found') // AMN - 2nd promise. The response is a promise as well that we have to manage.   
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//         console.error(`${err} 💥 💥 💥`)
+//         renderError(`Something went wrong 💥 💥 💥 ${err.message}. Try again`)
+//     }) // AMN - catches errors - Catch itself returns a promise as well.
+//     .finally(() => { // AMN - it doesn't matter whether the promise is fullfilled or rejected this will be always executed
+//         countriesContainer.style.opacity = 1;
+//     })
+// };
 
-btn.addEventListener('click', function() {
-    getCountryData('portugal');
-})
+// btn.addEventListener('click', function() {
+//     getCountryData('portugal');
+// })
 
 //getCountryData('catalonia');
 
@@ -205,9 +205,147 @@ TEST COORDINATES 2: -33.933, 18.474
 GOOD LUCK 😀
 */
 
-function whereAmI (lat, lng) {
-    console.log(lat, lng)
-    return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+// function whereAmI (lat, lng) {
+//     console.log(lat, lng)
+//     return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+//     .then(response => {
+//         if (!response.ok) throw new Error(`Problem with geocoding ${response.status}`);
+//         return response.json();
+//     })
+//     .then(data => 
+//         { if(!data.latt || data.latt === "") throw new Error(`Not data found - data: ${data}`) 
+//             console.log(`You are in ${data.city}, ${data.country}`)
+//         getCountryData(data.country)
+//     })
+//     .catch(err => console.log("The error is: ", err.message));
+// }
+
+// whereAmI(52.508, 13.381) // AMN - Germany
+
+// whereAmI(19.037, 72.873); // AMN - India
+
+// whereAmI(-33.933, 18.474); // AMN - South Africa
+
+// AMN - example of callback queue and microtasks queue 
+
+// console.log('Test start'); // executes 1st
+// setTimeout(() => console.log('0 sec timer'), 0); // goes to the callback queue and the event loop executes it after microtasks queue
+// Promise.resolve('Resolved promise 1').then(res => console.log(res)) // goes to the microtasks queue and the event loop executes it as soon as the promise is resolved
+
+// AMN - this promise takes time and makes the time out to delay far more than 0 seconds
+// Promise.resolve('Resolved promise 2 takes time and delays setTimeout').then(res => {
+//     for (let i = 0; i < 1000000000; i++) {}
+//     console.log(res)
+// })
+
+// console.log('Test end'); // executes 2nd
+
+// AMN - Promise creating and test
+
+// const lotteryPromise = new Promise(function (resolve, reject) {
+    
+//     console.log('Lottery draw ongoing...')
+
+//     setTimeout(function() {
+//         if (Math.random() >= 0.5) {
+//             resolve('You WIN!!!')
+//         } else {
+//             reject(new Error('You lost your money :('))
+//         }
+//     }, 2000)
+// })
+
+// lotteryPromise.then(res => console.log(res)).catch(err => console.error(err))
+
+// Promisifying setTimeout
+const wait = function(seconds) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, seconds * 1000)       
+    })
+}
+
+// wait(2)
+//     .then(() => {
+//         console.log('1 second passed')
+//         return wait(1)})
+//     .then(() => {
+//         console.log('2 seconds passed')
+//         return wait(1)})
+//     .then(() => {
+//         console.log('3 seconds passed')
+//         return wait(1)})    
+//     .then(() => console.log('4 seconds passed'))
+
+// Promise.resolve('abc').then(x => console.log(x)) // You can inmediately resolve a promise or...
+// Promise.reject('abc').catch(x => console.error(x)) // reject a promise
+
+// AMN - example of promisifying the Geolocation API
+
+// navigator.geolocation.getCurrentPosition(position => console.log(position), err => console.error(err))
+
+// AMN - above prmisified
+const getPosition = function() {
+    return new Promise(function(resolve, reject) {
+        // navigator.geolocation.getCurrentPosition(
+        // position => resolve(position),
+        // err => reject(err))
+        navigator.geolocation.getCurrentPosition(resolve, reject) // AMN - idem as above but simpler
+    })
+}
+
+//getPosition().then(pos => console.log(pos))
+
+const getCountryData = function (country) {
+    // Country 1
+    getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
+    .then(data => {
+        renderCountry(data[0]);
+        const neighbour = data[0].borders[0];
+        
+        if (!neighbour) throw new Error('No neighbour found!');
+
+        // Country 2
+        return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found') // AMN - 2nd promise. The response is a promise as well that we have to manage.   
+    })
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+        console.error(`${err} 💥 💥 💥`)
+        renderError(`Something went wrong 💥 💥 💥 ${err.message}. Try again`)
+    }) // AMN - catches errors - Catch itself returns a promise as well.
+    .finally(() => { // AMN - it doesn't matter whether the promise is fullfilled or rejected this will be always executed
+        countriesContainer.style.opacity = 1;
+    })
+};
+
+const getJSON = function(url, errorMsg = 'Something went wrong') {
+    return fetch(url).then(response => {
+        if(!response.ok)
+            throw new Error(`${errorMsg} (${response.status})`) // AMn - own error
+        return response.json()
+    }
+)}
+
+const renderCountry = function(data, className = '') {
+    const html = `
+            <article class="country ${className}">
+                <img class="country__img" src="${data.flag}" />
+                <div class="country__data">
+                    <h3 class="country__name">${data.name}</h3>
+                    <h4 class="country__region">${data.region}</h4>
+                    <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
+                    <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+                    <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+                </div>
+                </article>
+        `;
+        countriesContainer.insertAdjacentHTML('beforeend', html)
+}
+
+function whereAmI () {
+    getPosition().then(pos => {
+        const {latitude: lat, longitude: lng} = pos.coords;
+        return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`)
+    })
     .then(response => {
         if (!response.ok) throw new Error(`Problem with geocoding ${response.status}`);
         return response.json();
@@ -220,8 +358,71 @@ function whereAmI (lat, lng) {
     .catch(err => console.log("The error is: ", err.message));
 }
 
-whereAmI(52.508, 13.381) // AMN - Germany
+//whereAmI(52.508, 13.381) // AMN - Mi position
 
-whereAmI(19.037, 72.873); // AMN - India
+btn.addEventListener('click', whereAmI)
 
-whereAmI(-33.933, 18.474); // AMN - South Africa
+///////////////////////////////////////
+// Coding Challenge #2
+
+/* 
+Build the image loading functionality that I just showed you on the screen.
+
+Tasks are not super-descriptive this time, so that you can figure out some stuff on your own. Pretend you're working on your own 😉
+
+PART 1
+1. Create a function 'createImage' which receives imgPath as an input. This function returns a promise which creates a new image 
+(use document.createElement('img')) and sets the .src attribute to the provided image path. When the image is done loading, append it to the 
+DOM element with the 'images' class, and resolve the promise. The fulfilled value should be the image element itself. 
+In case there is an error loading the image ('error' event), reject the promise.
+
+If this part is too tricky for you, just watch the first part of the solution.
+
+PART 2
+2. Comsume the promise using .then and also add an error handler;
+3. After the image has loaded, pause execution for 2 seconds using the wait function we created earlier;
+4. After the 2 seconds have passed, hide the current image (set display to 'none'), and load a second image 
+(HINT: Use the image element returned by the createImage promise to hide the current image. You will need a global variable for that 😉);
+5. After the second image has loaded, pause execution for 2 seconds again;
+6. After the 2 seconds have passed, hide the current image.
+
+TEST DATA: Images in the img folder. Test the error handler by passing a wrong image path. Set the network speed to 'Fast 3G' 
+in the dev tools Network tab, otherwise images load too fast.
+
+GOOD LUCK 😀
+*/
+
+const imagesContainer = document.querySelector('.images');
+let image;
+
+function createImage(imgPath) {
+    return new Promise(function(resolve, reject) {
+        if (imgPath !== null && imgPath !== "") {
+            image = document.createElement('img')
+            //image.classList.add('images')
+            image.src = imgPath
+            image.addEventListener('load', function() {
+                imagesContainer.append(image)
+                resolve(image)
+            })
+            image.addEventListener('error', function () {
+                reject(new Error('Image not found'))
+            })
+        } else {
+            reject(new Error('The image url is empty'))
+        }
+    })
+}
+
+const main = document.querySelector('.container');
+
+createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-1.jpg")
+// .then(data => imagesContainer.append(data))
+.then(image => {return wait(2)})
+.then(() => {
+    image.style.display = "none"
+    return createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-2.jpg")
+})
+.then(image => {return wait(2)})
+.then(() => image.style.display = "none")
+.catch(err => console.error(err));
