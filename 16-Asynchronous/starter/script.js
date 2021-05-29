@@ -328,7 +328,10 @@ const getJSON = function(url, errorMsg = 'Something went wrong') {
 )}
 
 const renderCountry = function(data, className = '') {
+<<<<<<< HEAD
     console.log("Data in renderCountry: ", data);
+=======
+>>>>>>> 9927473951c0a6bc1be1d877517ef08b710831d6
     const html = `
             <article class="country ${className}">
                 <img class="country__img" src="${data.flag}" />
