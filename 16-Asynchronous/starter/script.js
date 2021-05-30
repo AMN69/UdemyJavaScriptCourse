@@ -286,64 +286,64 @@ const wait = function(seconds) {
 // navigator.geolocation.getCurrentPosition(position => console.log(position), err => console.error(err))
 
 // AMN - above prmisified
-const getPosition = function() {
-    return new Promise(function(resolve, reject) {
-        // navigator.geolocation.getCurrentPosition(
-        // position => resolve(position),
-        // err => reject(err))
-        navigator.geolocation.getCurrentPosition(resolve, reject) // AMN - idem as above but simpler
-    })
-}
+// const getPosition = function() {
+//     return new Promise(function(resolve, reject) {
+//         // navigator.geolocation.getCurrentPosition(
+//         // position => resolve(position),
+//         // err => reject(err))
+//         navigator.geolocation.getCurrentPosition(resolve, reject) // AMN - idem as above but simpler
+//     })
+// }
 
 //getPosition().then(pos => console.log(pos))
 
-const getCountryData = function (country) {
-    // Country 1
-    getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
-    .then(data => {
-        renderCountry(data[0]);
-        const neighbour = data[0].borders[0];
+// const getCountryData = function (country) {
+//     // Country 1
+//     getJSON(`https://restcountries.eu/rest/v2/name/${country}`, 'Country not found')
+//     .then(data => {
+//         renderCountry(data[0]);
+//         const neighbour = data[0].borders[0];
         
-        if (!neighbour) throw new Error('No neighbour found!');
+//         if (!neighbour) throw new Error('No neighbour found!');
 
-        // Country 2
-        return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found') // AMN - 2nd promise. The response is a promise as well that we have to manage.   
-    })
-    .then(data => renderCountry(data, 'neighbour'))
-    .catch(err => {
-        console.error(`${err} 💥 💥 💥`)
-        renderError(`Something went wrong 💥 💥 💥 ${err.message}. Try again`)
-    }) // AMN - catches errors - Catch itself returns a promise as well.
-    .finally(() => { // AMN - it doesn't matter whether the promise is fullfilled or rejected this will be always executed
-        countriesContainer.style.opacity = 1;
-    })
-};
+//         // Country 2
+//         return getJSON(`https://restcountries.eu/rest/v2/alpha/${neighbour}`, 'Country not found') // AMN - 2nd promise. The response is a promise as well that we have to manage.   
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//         console.error(`${err} 💥 💥 💥`)
+//         renderError(`Something went wrong 💥 💥 💥 ${err.message}. Try again`)
+//     }) // AMN - catches errors - Catch itself returns a promise as well.
+//     .finally(() => { // AMN - it doesn't matter whether the promise is fullfilled or rejected this will be always executed
+//         countriesContainer.style.opacity = 1;
+//     })
+// };
 
-const getJSON = function(url, errorMsg = 'Something went wrong') {
-    return fetch(url).then(response => {
-        if(!response.ok)
-            throw new Error(`${errorMsg} (${response.status})`) // AMn - own error
-        return response.json()
-    }
-)}
+// const getJSON = function(url, errorMsg = 'Something went wrong') {
+//     return fetch(url).then(response => {
+//         if(!response.ok)
+//             throw new Error(`${errorMsg} (${response.status})`) // AMn - own error
+//         return response.json()
+//     }
+// )}
 
-const renderCountry = function(data, className = '') {
-    console.log("Data in renderCountry: ", data);
-    const html = `
-            <article class="country ${className}">
-                <img class="country__img" src="${data.flag}" />
-                <div class="country__data">
-                    <h3 class="country__name">${data.name}</h3>
-                    <h4 class="country__region">${data.region}</h4>
-                    <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
-                    <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
-                    <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
-                </div>
-                </article>
-        `;
-        countriesContainer.insertAdjacentHTML('beforeend', html)
-        countriesContainer.style.opacity = 1;
-}
+// const renderCountry = function(data, className = '') {
+//     console.log("Data in renderCountry: ", data);
+//     const html = `
+//             <article class="country ${className}">
+//                 <img class="country__img" src="${data.flag}" />
+//                 <div class="country__data">
+//                     <h3 class="country__name">${data.name}</h3>
+//                     <h4 class="country__region">${data.region}</h4>
+//                     <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
+//                     <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+//                     <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+//                 </div>
+//                 </article>
+//         `;
+//         countriesContainer.insertAdjacentHTML('beforeend', html)
+//         countriesContainer.style.opacity = 1;
+// }
 
 // function whereAmI () {
 //     getPosition().then(pos => {
@@ -433,34 +433,34 @@ GOOD LUCK 😀
 
 // AMN - Promises with async/await
 
-const whereAmI = async function() {
-    try {
-        // Geolocation
-        const pos = await getPosition();
-        const { latitude: lat, longitude: lng } = pos.coords;
+// const whereAmI = async function() {
+//     try {
+//         // Geolocation
+//         const pos = await getPosition();
+//         const { latitude: lat, longitude: lng } = pos.coords;
 
-        // Reverse geocoding
-        const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
-        if (!resGeo.ok) throw new Error('Problem getting location data')
+//         // Reverse geocoding
+//         const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//         if (!resGeo.ok) throw new Error('Problem getting location data')
         
-        const dataGeo = await resGeo.json();
+//         const dataGeo = await resGeo.json();
 
-        // Country data
-        // fetch(`https://restcountries.eu/rest/v2/name/${country}`))
-        // .then(res => console.log(res))
-        const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`)
-        if (!resGeo.ok) throw new Error('Problem getting country data')
+//         // Country data
+//         // fetch(`https://restcountries.eu/rest/v2/name/${country}`))
+//         // .then(res => console.log(res))
+//         const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`)
+//         if (!resGeo.ok) throw new Error('Problem getting country data')
 
-        const data = await res.json()
-        renderCountry(data[0])
-        return `You are in ${dataGeo.city}, ${dataGeo.country}`
-    } catch (err) {
-        console.error(err);
-        renderError(`Something went wrong ${err.message}`)
-        // Reject promise returned from async function
-        throw err;
-    }
-};
+//         const data = await res.json()
+//         renderCountry(data[0])
+//         return `You are in ${dataGeo.city}, ${dataGeo.country}`
+//     } catch (err) {
+//         console.error(err);
+//         renderError(`Something went wrong ${err.message}`)
+//         // Reject promise returned from async function
+//         throw err;
+//     }
+// };
 
 // whereAmI()
 //     .then(city => console.log(`2: ${city}`)) // AMN - or all goes well...
@@ -472,17 +472,17 @@ const whereAmI = async function() {
 
 // AMN - Important note: whether you put a ; in the instruction before (async ... ) or just in front of async like this: ;(async...) otherwise it gives an error
 
-(async function() {
-    try {
-        const city = await whereAmI();
-        console.log(`2: ${city}`);
-    } catch (err) {
-        console.error(`2: ${err.message}`);
-    } 
-    console.log('All done');
-})();
+// (async function() {
+//     try {
+//         const city = await whereAmI();
+//         console.log(`2: ${city}`);
+//     } catch (err) {
+//         console.error(`2: ${err.message}`);
+//     } 
+//     console.log('All done');
+// })();
 
-console.log('FIRST');
+// console.log('FIRST');
 
 
 
@@ -497,22 +497,153 @@ console.log('FIRST');
 // }
 
 // AMN - Here we are doing 3 async calls when we could do them in paralell
-const get3Countries = async function (country1, country2, country3) {
-    try {
-        // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${country1}`)
-        // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${country2}`)
-        // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${country3}`)
-        // console.log([data1.capital, data2.capital, data3.capital]);
-        const data = await Promise.all([
-            getJSON(`https://restcountries.eu/rest/v2/name/${country1}`),
-            getJSON(`https://restcountries.eu/rest/v2/name/${country2}`),
-            getJSON(`https://restcountries.eu/rest/v2/name/${country3}`)
-        ])
-        console.log(data.map(d => d[0].capital));
-    } catch (err) {
-        console.error(err)        
-    }
+// const get3Countries = async function (country1, country2, country3) {
+//     try {
+//         // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${country1}`)
+//         // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${country2}`)
+//         // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${country3}`)
+//         // console.log([data1.capital, data2.capital, data3.capital]);
+//         const data = await Promise.all([
+//             getJSON(`https://restcountries.eu/rest/v2/name/${country1}`),
+//             getJSON(`https://restcountries.eu/rest/v2/name/${country2}`),
+//             getJSON(`https://restcountries.eu/rest/v2/name/${country3}`)
+//         ])
+//         console.log(data.map(d => d[0].capital));
+//     } catch (err) {
+//         console.error(err)        
+//     }
+// }
+
+// get3Countries('portugal', 'usa', 'france');
+
+// AMN - Promise.race() makes that the first promise to end is the winner and gives the fulfillment or reject to the array (unless the Promise.all() that needs all the promises to be fullfilled)
+
+// (async function () {
+//     const res = await Promise.race([
+//       getJSON(`https://restcountries.eu/rest/v2/name/italy`),
+//       getJSON(`https://restcountries.eu/rest/v2/name/egypt`),
+//       getJSON(`https://restcountries.eu/rest/v2/name/mexico`),
+//     ]);
+//     console.log(res[0]);
+//   })();
+  
+//   const timeout = function (sec) {
+//     return new Promise(function (_, reject) {
+//       setTimeout(function () {
+//         reject(new Error('Request took too long!'));
+//       }, sec * 1000);
+//     });
+//   };
+  
+//   Promise.race([
+//     getJSON(`https://restcountries.eu/rest/v2/name/tanzania`),
+//     timeout(0.1),
+//   ])
+//     .then(res => console.log(res[0]))
+//     .catch(err => console.error(err));
+
+// // Promise.allSettled
+// Promise.allSettled([
+//     Promise.resolve('Success'),
+//     Promise.reject('ERROR'),
+//     Promise.resolve('Another success'),
+//   ]).then(res => console.log("Promise.allSettled response: ", res));
+  
+//   Promise.all([
+//     Promise.resolve('Success'),
+//     Promise.reject('ERROR'),
+//     Promise.resolve('Another success'),
+//   ])
+//     .then(res => console.log("Promise.all response: ", res))
+//     .catch(err => console.error("Promise.all error: ", err));
+  
+//   // Promise.any [ES2021] - ignores rejected promises
+//   Promise.any([
+//     Promise.resolve('Success'),
+//     Promise.reject('ERROR'),
+//     Promise.resolve('Another success'),
+//   ])
+//     .then(res => console.log("Promise.any response: ", res))
+//     .catch(err => console.error("Promise.any error: ", err));
+  
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+PART 1
+Write an async function 'loadNPause' that recreates Coding Challenge #2, this time using async/await (only the part where the promise is consumed). 
+Compare the two versions, think about the big differences, and see which one you like more.
+Don't forget to test the error handler, and to set the network speed to 'Fast 3G' in the dev tools Network tab.
+
+PART 2
+1. Create an async function 'loadAll' that receives an array of image paths 'imgArr';
+2. Use .map to loop over the array, to load all the images with the 'createImage' function (call the resulting array 'imgs')
+3. Check out the 'imgs' array in the console! Is it like you expected?
+4. Use a promise combinator function to actually get the images from the array 😉
+5. Add the 'paralell' class to all the images (it has some CSS styles).
+
+TEST DATA: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']. To test, turn off the 'loadNPause' function.
+
+GOOD LUCK 😀
+*/
+
+const imagesContainer = document.querySelector('.images');
+//let image;
+
+function createImage(imgPath) {
+    return new Promise(function(resolve, reject) {
+        if (imgPath !== null && imgPath !== "") {
+            const image = document.createElement('img')
+            image.src = imgPath
+            image.addEventListener('load', function() {
+                imagesContainer.append(image)
+                resolve(image)
+            })
+            image.addEventListener('error', function () {
+                reject(new Error('Image not found'))
+            })
+        } else {
+            reject(new Error('The image url is empty'))
+        }
+    })
 }
+  
 
-get3Countries('portugal', 'usa', 'france')
+//const main = document.querySelector('.container');
 
+// const loadNPause = async function () {
+//     try {
+//         await createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-1.jpg")
+//         await wait(2)
+//         image.style.display = "none"
+//         await createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-2.jpg") 
+//         await wait(2)
+//         image.style.display = "none"
+//     } catch (err) {
+//         console.error(err)
+//     }
+// };
+
+// loadNPause();
+
+const loadAll = async function (imgArr) {
+    try {
+      const imgs = imgArr.map(async img => await createImage(img)); // AMN - this is an array of promises
+      const imgsEl = await Promise.all(imgs); // AMN - we handle the array of promises here in at the same time
+      console.log(imgsEl);
+      imgsEl.forEach(img => img.classList.add('parallel'));
+    } catch (err) {
+      console.error(err);
+    }
+};
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
+
+// createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-1.jpg")
+// .then(image => {return wait(2)})
+// .then(() => {
+//     image.style.display = "none"
+//     return createImage("/Users/andreumartineznuevo/OneDrive/Andreu/Udemy Javascript course/complete-javascript-course-master/16-Asynchronous/final/img/img-2.jpg")
+// })
+// .then(image => {return wait(2)})
+// .then(() => image.style.display = "none")
+// .catch(err => console.error(err));
