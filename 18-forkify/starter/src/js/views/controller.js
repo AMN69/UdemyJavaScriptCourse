@@ -1,3 +1,6 @@
+import * as model from './model.js' // AMN - We import all the exported in model.js
+import recipeView from './views/recipeView';
+
 // AMN - In parcel we can import images and we do it to get the icons.
 import icons from 'url:../img/icons.svg'; // Parcel 2 - path to the icons file.
 import 'core-js/stable'; // AMN - Polyfylling rest (not async/await)
@@ -141,36 +144,38 @@ const noRecipesErr = `
 `;
 
 // AMN - We get a recipe from the API by its id accordingly with API documentation (https://forkify-api.herokuapp.com/v2) 
-const theRecipe = async function (someRecipe) {
+const theRecipe = async function () {
   try {
-    const res = await fetch(someRecipe);
-    const data = await res.json();
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-    let {recipe} = data.data;
-    recipe = {
-      id: recipe.id,
-      title: recipe.title,
-      publisher: recipe.publisher,
-      sourceUrl: recipe.source_url,
-      image: recipe.image_url,
-      servings: recipe.servings,
-      cookingTime: recipe.cooking_time,
-      ingredients: recipe.ingredients,
-    }
-    console.log(recipe);
+    const id = window.location.hash.slice(1); // AMN location is the entire url
+    if (!id) return; // AMN - Guard clause just in case we don't have any id.
+
+    // AMN - we load the recipe
+    await model.loadRecipe(id);
+    const {recipe} = model.state;
+
     spinnerClass.remove();
+
+    // AMN - we render the recipe 
+    recipeView.render(model.state.recipe);
+    
     recipeContainer.insertAdjacentHTML('afterbegin', renderRecipe(recipe));
   } catch (error) {
     alert(error);
   }
-}
+};
 
 messageClass.remove(); // AMN - another option is to use innerHTML = '';
-console.log("recipeContainer after: ",recipeContainer)
-console.log("spinner: ", spinner);
 recipeContainer.insertAdjacentHTML('afterbegin', spinner);
-console.log("recipeContainer before: ",recipeContainer)
 const spinnerClass = document.querySelector('.spinner');
 
-theRecipe('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
+//AMN - Listening hash change on url to load a new recipe or simple the loading page first time
 
+//window.addEventListener("hashchange", theRecipe); // AMN - change on url hast
+//window.addEventListener("load", theRecipe); // AMN - first time the page loads (no hash change yet)
+
+// AMN - this is a way of doing the same that above but once (think about having a lot of events to listen to)
+
+['hashchange', 'load'].forEach(event => window.addEventListener(event, theRecipe));
+
+//theRecipe('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
+//theRecipe('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc90b');
