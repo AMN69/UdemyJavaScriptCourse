@@ -1,0 +1,1 @@
+require('./bundle-manifest').register(JSON.parse("{\"f8dce6e9933a1e81\":\"controller.bcec3aeb.js\",\"5239ad8e6d97e33a\":\"icons.8d3bb6c1.svg\"}"));
