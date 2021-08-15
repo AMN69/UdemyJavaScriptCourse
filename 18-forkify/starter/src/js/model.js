@@ -22,7 +22,9 @@ export const loadRecipe = async function(id) {
         ingredients: recipe.ingredients,
         };
         console.log(recipe);
+        console.log(state.recipe);
     } catch (error) {
+        console.log("within model error");
         alert(error);
     };   
 }

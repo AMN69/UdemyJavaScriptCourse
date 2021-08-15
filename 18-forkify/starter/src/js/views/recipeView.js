@@ -1,11 +1,13 @@
 // AMN - In parcel we can import images and we do it to get the icons.
 import icons from 'url:../../img/icons.svg'; // Parcel 2 - path to the icons file.
+import {Fraction} from 'fractional';
 
 class RecipeView {
     #parentElement = document.querySelector('.recipe');
     #data;
 
     render(data) {
+      console.log("within recipeView render: ", data);
         this.#data = data;
         const markup = this.#generateMarkup();
         this.#clear();
@@ -33,13 +35,13 @@ class RecipeView {
     #generateMarkup() {
         let ingredientsList = "";
         // AMN - another option is to use a map instead of each
-        recipe.ingredients.forEach(ingredient => {
+        this.#data.ingredients.forEach(ingredient => {
           ingredientsList +=`
               <li class="recipe__ingredient">
                 <svg class="recipe__icon">
                   <use href="${icons}#icon-check"></use>
                 </svg>
-                <div class="recipe__quantity">${ingredient.quantity !== null ? ingredient.quantity : ''}</div>
+                <div class="recipe__quantity">${ingredient.quantity !== null ? new Fraction(ingredient.quantity).toString() : ''}</div>
                 <div class="recipe__description">
                   <span class="recipe__unit">${ingredient.unit}</span>
                   ${ingredient.description}
@@ -60,14 +62,14 @@ class RecipeView {
                     <svg class="recipe__info-icon">
                     <use href="${icons}#icon-clock"></use>
                     </svg>
-                    <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookingTime}</span>
+                    <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookingTime}</span>
                     <span class="recipe__info-text">minutes</span>
                 </div>
                 <div class="recipe__info">
                     <svg class="recipe__info-icon">
                     <use href="${icons}#icon-users"></use>
                     </svg>
-                    <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+                    <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
                     <span class="recipe__info-text">servings</span>
 
                     <div class="recipe__info-buttons">

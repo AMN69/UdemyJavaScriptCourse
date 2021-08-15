@@ -136,14 +136,15 @@ const controlRecipes = async function () {
   try {
     const id = window.location.hash.slice(1); // AMN location is the entire url
     if (!id) return; // AMN - Guard clause just in case we don't have any id.
-    recipeView.renderSpinner();
+    RecipeView.renderSpinner();
 
     // AMN - we load the recipe
     await model.loadRecipe(id);
 
     // AMN - we render the recipe 
-    recipeView.render(model.state.recipe);    
+    RecipeView.render(model.state.recipe);    
   } catch (error) {
+    console.log("within controller error");
     alert(error);
   }
 };
@@ -159,7 +160,7 @@ const controlRecipes = async function () {
 
 // AMN - this is a way of doing the same that above but once (think about having a lot of events to listen to)
 
-['hashchange', 'load'].forEach(event => window.addEventListener(event, RecipeView.render()));
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipes));
 
 //theRecipe('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
 //theRecipe('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc90b');
