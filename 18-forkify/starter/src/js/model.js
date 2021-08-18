@@ -1,14 +1,17 @@
 // AMN - When this state is updated here the controller will access it becausse is exported from here to there (imported)
+import { async } from 'regenerator-runtime';
+import { API_URL } from './config';
+import { getJSON } from './helpers';
 
 export const state = {
     recipe: {},
+    search: {},
+    bookmarks: []
 };
 
 export const loadRecipe = async function(id) {
     try {
-        const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+        const data = await getJSON(`${API_URL}/${id}`)
         
         const {recipe} = data.data;
         state.recipe = {
@@ -24,7 +27,6 @@ export const loadRecipe = async function(id) {
         console.log(recipe);
         console.log(state.recipe);
     } catch (error) {
-        console.log("within model error");
-        alert(error);
-    };   
-}
+        console.error(`${error}`); 
+    }  
+};
