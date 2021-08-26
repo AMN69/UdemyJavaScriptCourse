@@ -50,6 +50,14 @@ const controlSearchResults = async function () {
   }
 }
 
+const controlPagination = function(goToPage) {
+  // AMN - we render the NEW results of the search
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  // AMN - we render the NEW pagination buttons
+  paginationView.render(model.state.search)
+}
+
 // AMN - we want the controller to control the events (hash and load)
 // therefore we init at the beginning the event listerers from the controller
 // the event listerers are in the recipeView because are DOM but who
@@ -57,5 +65,6 @@ const controlSearchResults = async function () {
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
+  paginationView.addHandlerClick(controlPagination);
 };
 init();
