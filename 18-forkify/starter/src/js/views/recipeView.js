@@ -12,6 +12,18 @@ class RecipeView extends View { // AMN - inherits all view methods
       ['hashchange', 'load'].forEach(event => window.addEventListener(event, handler));
     }
 
+    addHandlerUpdateServings(handler) {
+      this._parentElement.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn--update-servings');
+
+        if(!btn) return;
+
+        const updateTo = +btn.dataset.updateTo; 
+        //console.log(updateTo);
+        handler(updateTo);
+    })
+    }
+
     _generateMarkup() {
       let ingredientsList = "";
       // AMN - another option is to use a map instead of each
@@ -42,12 +54,12 @@ class RecipeView extends View { // AMN - inherits all view methods
               <span class="recipe__info-text">servings</span>
 
               <div class="recipe__info-buttons">
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings > 1 ? this._data.servings - 1 : this._data.servings}">
                   <svg>
                   <use href="${icons}#icon-minus-circle"></use>
                   </svg>
               </button>
-              <button class="btn--tiny btn--increase-servings">
+              <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
                   <svg>
                   <use href="${icons}#icon-plus-circle"></use>
                   </svg>
@@ -93,7 +105,7 @@ class RecipeView extends View { // AMN - inherits all view methods
   }
   
   _generateMarkupIngredient(ingredient) {
-    console.log("Ingredient within foreach:", ingredient)
+    //console.log("Ingredient within foreach:", ingredient)
     return `
       <li class="recipe__ingredient">
         <svg class="recipe__icon">

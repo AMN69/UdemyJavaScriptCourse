@@ -1,3 +1,7 @@
+// AMN - As we use the MVC (Model View Controller) we call these functions 
+// controllers but they could be perfectly called handlers because it
+// what they are, they are handlers controlling events.
+
 import * as model from './model.js' // AMN - We import all the exported in model.js
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
@@ -58,6 +62,14 @@ const controlPagination = function(goToPage) {
   paginationView.render(model.state.search)
 }
 
+// AMN - This controller is called when the user clicks the +/- buttons
+// on the screen to increase or decrease the servings.
+// Here we will update the state servings and the recipe view.
+const controlServings = function(newServings) {
+  model.updateServings(newServings);
+  recipeView.render(model.state.recipe);    
+}
+
 // AMN - we want the controller to control the events (hash and load)
 // therefore we init at the beginning the event listerers from the controller
 // the event listerers are in the recipeView because are DOM but who
@@ -66,5 +78,6 @@ const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
+  recipeView.addHandlerUpdateServings(controlServings);
 };
 init();
