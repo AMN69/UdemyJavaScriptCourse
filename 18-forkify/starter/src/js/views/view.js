@@ -7,6 +7,8 @@ import icons from 'url:../../img/icons.svg'; // Parcel 2 - path to the icons fil
 export default class View {
     _data;
 
+    // AMN - This method renders the complete DOM for each change.
+
     render(data) {
       // AMN - guard clause if no data (one recipe) or array (several recipes) is empty we render a message
       if (!data || (Array.isArray(data) && data.length === 0)) 
@@ -16,6 +18,36 @@ export default class View {
       const markup = this._generateMarkup();
       this._clear();
       this._parentElement.insertAdjacentHTML('afterbegin', markup);
+    }
+
+    // AMN - This method instead of rendering all the views only updates what has changed.
+    // This is comparing real DOM with the new DOM we want to update. It only changes the
+    // text and attributes that have changed on the real DOM instead of, as the above method
+    // does updating always the entire real DOM for any simple change.
+
+    update(data) {
+     
+      this._data = data;
+      const newMarkup = this._generateMarkup();
+
+      const newDOM = document.createRange().createContextualFragment(newMarkup); // AMN - converts the string into a new real DOM object
+      const newElements = Array.from(newDOM.querySelectorAll('*')); // AMN - new DOM
+      const curElements = Array.from(this._parentElement.querySelectorAll('*')); // AMN - old DOM
+
+      newElements.forEach((newElement, index) => {
+        const curEl = curElements[index];
+
+        // AMN - Updates changed TEXT
+        if (!newElement.isEqualNode(curEl) && newElement.firstChild?.nodeValue.trim() !== '') {
+          curEl.textContent = newElement.textContent;
+        };
+
+        // AMN - Updates changed ATTRIBUTES
+        if (!newElement.isEqualNode(curEl)) {
+          Array.from(newElement.attributes).forEach(attribute => 
+            curEl.setAttribute(attribute.name, attribute.value)) // AMN - we replace each attribute coming from the new element to the current element
+        };
+      })
     }
 
     _clear() {

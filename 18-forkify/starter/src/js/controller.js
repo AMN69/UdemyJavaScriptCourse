@@ -23,6 +23,9 @@ const controlRecipes = async function () {
     // AMN - while loading the recipe show a spinner
     recipeView.renderSpinner();
 
+    // AMN - update results view to mark selected search result
+    resultsView.update(model.getSearchResultsPage());
+
     // AMN - we load the recipe
     await model.loadRecipe(id);
 
@@ -67,7 +70,9 @@ const controlPagination = function(goToPage) {
 // Here we will update the state servings and the recipe view.
 const controlServings = function(newServings) {
   model.updateServings(newServings);
-  recipeView.render(model.state.recipe);    
+//  recipeView.render(model.state.recipe);
+// Instead of rendering all the view each time we will only update what has changed.  
+  recipeView.update(model.state.recipe);  
 }
 
 // AMN - we want the controller to control the events (hash and load)
