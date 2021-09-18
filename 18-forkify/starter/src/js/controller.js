@@ -75,6 +75,13 @@ const controlServings = function(newServings) {
   recipeView.update(model.state.recipe);  
 }
 
+const controlAddBookmark = function(){
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+  //console.log("Within controlAddBookmark")
+  recipeView.update(model.state.recipe);
+};
+
 // AMN - we want the controller to control the events (hash and load)
 // therefore we init at the beginning the event listerers from the controller
 // the event listerers are in the recipeView because are DOM but who
@@ -82,6 +89,7 @@ const controlServings = function(newServings) {
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
+  recipeView.addHandlerAddBookmark(controlAddBookmark);
   paginationView.addHandlerClick(controlPagination);
   recipeView.addHandlerUpdateServings(controlServings);
 };

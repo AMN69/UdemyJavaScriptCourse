@@ -21,7 +21,16 @@ class RecipeView extends View { // AMN - inherits all view methods
         const updateTo = +btn.dataset.updateTo; 
         //console.log(updateTo);
         handler(updateTo);
-    })
+      })
+    }
+
+    addHandlerAddBookmark(handler) {
+      this._parentElement.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn--bookmark');
+        console.log("Within bookmark clicked")
+        if (!btn) return
+        handler();
+      })
     }
 
     _generateMarkup() {
@@ -30,6 +39,7 @@ class RecipeView extends View { // AMN - inherits all view methods
       this._data.ingredients.forEach(ingredient => 
           ingredientsList = ingredientsList + this._generateMarkupIngredient(ingredient)
       );  
+      //console.log("Bookmark: ", this._data.bookmarked)
       return `
         <figure class="recipe__fig">
             <img src="${this._data.image}" alt="Recipe image" class="recipe__img" />
@@ -69,9 +79,9 @@ class RecipeView extends View { // AMN - inherits all view methods
 
         <div class="recipe__user-generated">
         </div>
-        <button class="btn--round">
+        <button class="btn--round btn--bookmark">
             <svg class="">
-            <use href="${icons}#icon-bookmark-fill"></use>
+            <use href="${icons}#icon-bookmark${this._data.bookmarked ? '-fill' : ''}"></use>
             </svg>
         </button>
       </div>
