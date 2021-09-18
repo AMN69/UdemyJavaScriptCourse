@@ -6,6 +6,7 @@ import * as model from './model.js' // AMN - We import all the exported in model
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
+import bookmarksView from './views/bookmarksView.js';
 import paginationView from './views/paginationView.js';
 
 import 'core-js/stable'; // AMN - Polyfylling rest (not async/await)
@@ -25,6 +26,7 @@ const controlRecipes = async function () {
 
     // AMN - update results view to mark selected search result
     resultsView.update(model.getSearchResultsPage());
+    bookmarksView.update(model.state.bookmarks);
 
     // AMN - we load the recipe
     await model.loadRecipe(id);
@@ -78,8 +80,10 @@ const controlServings = function(newServings) {
 const controlAddBookmark = function(){
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe.id);
-  //console.log("Within controlAddBookmark")
+  
   recipeView.update(model.state.recipe);
+
+  bookmarksView.render(model.state.bookmarks);
 };
 
 // AMN - we want the controller to control the events (hash and load)
