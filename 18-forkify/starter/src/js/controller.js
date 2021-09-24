@@ -8,6 +8,7 @@ import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
 import bookmarksView from './views/bookmarksView.js';
 import paginationView from './views/paginationView.js';
+import addRecipeView from './views/addRecipeView.js';
 
 import 'core-js/stable'; // AMN - Polyfylling rest (not async/await)
 import 'regenerator-runtime/runtime'; // AMN - Polyfilling async/await
@@ -89,6 +90,10 @@ const controlBookmarks = function () {
   bookmarksView.render(model.state.bookmarks);
 }
 
+const controlAddRecipe = function(newRecipe) {
+  console.log(newRecipe);
+}
+
 // AMN - we want the controller to control the events (hash and load)
 // therefore we init at the beginning the event listerers from the controller
 // the event listerers are in the recipeView because are DOM but who
@@ -100,5 +105,6 @@ const init = function () {
   recipeView.addHandlerAddBookmark(controlAddBookmark); // AMN - Handles clicks on the bookmark to mark unmark
   paginationView.addHandlerClick(controlPagination); // AMN - Handles clicks on the pagination buttons to go forward or backward
   recipeView.addHandlerUpdateServings(controlServings); // AMN - Handles clicks on the +/- buttons to increase or decrease servings
+  addRecipeView.addHandlerUpload(controlAddRecipe); // AMN - Handles clicks on the add Recipe button
 };
 init();
