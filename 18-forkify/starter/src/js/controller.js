@@ -24,15 +24,14 @@ const controlRecipes = async function () {
     // AMN - while loading the recipe show a spinner
     recipeView.renderSpinner();
 
-    // AMN - update results view to mark selected search result
+    // AMN - update results view to mark selected search result and bookmarks view
     resultsView.update(model.getSearchResultsPage());
     bookmarksView.update(model.state.bookmarks);
-
     // AMN - we load the recipe
     await model.loadRecipe(id);
 
     // AMN - we render the recipe 
-    recipeView.render(model.state.recipe);    
+    recipeView.render(model.state.recipe);  
   } catch (error) {
     recipeView.renderError();
   }
@@ -86,15 +85,20 @@ const controlAddBookmark = function(){
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+}
+
 // AMN - we want the controller to control the events (hash and load)
 // therefore we init at the beginning the event listerers from the controller
 // the event listerers are in the recipeView because are DOM but who
 // invoke them is the controller who controls all.
 const init = function () {
-  recipeView.addHandlerRender(controlRecipes);
-  searchView.addHandlerSearch(controlSearchResults);
-  recipeView.addHandlerAddBookmark(controlAddBookmark);
-  paginationView.addHandlerClick(controlPagination);
-  recipeView.addHandlerUpdateServings(controlServings);
+  bookmarksView.addHandlerRender(controlBookmarks); // AMN - Handles the loading of the bookmarks when the page is loaded 
+  recipeView.addHandlerRender(controlRecipes); // AMN - Handles changes in the recipe through url
+  searchView.addHandlerSearch(controlSearchResults); // AMN - Handles changes in the search area
+  recipeView.addHandlerAddBookmark(controlAddBookmark); // AMN - Handles clicks on the bookmark to mark unmark
+  paginationView.addHandlerClick(controlPagination); // AMN - Handles clicks on the pagination buttons to go forward or backward
+  recipeView.addHandlerUpdateServings(controlServings); // AMN - Handles clicks on the +/- buttons to increase or decrease servings
 };
 init();
