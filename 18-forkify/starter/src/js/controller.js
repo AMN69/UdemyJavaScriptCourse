@@ -9,6 +9,7 @@ import resultsView from './views/resultsView.js';
 import bookmarksView from './views/bookmarksView.js';
 import paginationView from './views/paginationView.js';
 import addRecipeView from './views/addRecipeView.js';
+import { MODAL_CLOSE_SEC } from './config.js';
 
 import 'core-js/stable'; // AMN - Polyfylling rest (not async/await)
 import 'regenerator-runtime/runtime'; // AMN - Polyfilling async/await
@@ -92,8 +93,18 @@ const controlBookmarks = function () {
 
 const controlAddRecipe = async function(newRecipe) {
   try {
+    // Show spinner
+    addRecipeView.renderSpinner();
     await model.uploadRecipe(newRecipe);
-    
+    console.log(model.state.recipe);
+    // Render recipe
+    recipeView.render(model.state.recipe);
+    // Success message
+    addRecipeView.renderMessage();
+    // Close form window
+    setTimeout(function() {
+      addRecipeView.toggleWindow()
+    }, MODAL_CLOSE_SEC * 1000)
   } catch(err) {
     console.log(err);
     addRecipeView.renderError(err.message);

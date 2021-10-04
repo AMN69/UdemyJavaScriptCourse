@@ -25,6 +25,7 @@ const createRecipeObject = function (data) {
     servings: recipe.servings,
     cookingTime: recipe.cooking_time,
     ingredients: recipe.ingredients,
+    ...(recipe.key && { key: recipe.key}) // AMN - If there is a key we desectructure the pair key and recipe.key otherwise there is no key in the object
     };
 };
 
@@ -152,6 +153,7 @@ export const uploadRecipe = async function (newRecipe) {
         console.log(recipe);
         const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe)
         state.recipe = createRecipeObject(data);
+        addBookmark(state.recipe);
     } catch(err) {
         throw err;
     }
