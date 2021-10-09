@@ -101,6 +101,12 @@ const controlAddRecipe = async function(newRecipe) {
     recipeView.render(model.state.recipe);
     // Success message
     addRecipeView.renderMessage();
+
+    // Render bookmark View
+    bookmarksView.render(model.state.bookmarks);
+    // Chagen ID in the U_RL
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+
     // Close form window
     setTimeout(function() {
       addRecipeView.toggleWindow()

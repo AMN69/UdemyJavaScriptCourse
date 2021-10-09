@@ -1,7 +1,8 @@
 // AMN - When this state is updated here the controller will access it becausse is exported from here to there (imported)
 import { async } from 'regenerator-runtime';
 import { API_URL, RES_PER_PAGE, KEY } from './config';
-import { getJSON, sendJSON } from './helpers';
+//import { getJSON, sendJSON } from './helpers';
+import { AJAX } from './helpers';
 
 export const state = {
     recipe: {},
@@ -31,7 +32,7 @@ const createRecipeObject = function (data) {
 
 export const loadRecipe = async function(id) {
     try {
-        const data = await getJSON(`${API_URL}${id}`);
+        const data = await AJAX(`${API_URL}${id}?KEY=${KEY}`);
         
         state.recipe = createRecipeObject(data);
 
@@ -51,7 +52,7 @@ export const loadSearchResults = async function(query) {
         state.search.query = query;
         state.search.currentPage = 1;
 
-        const data = await getJSON(`${API_URL}?search=${query}`);
+        const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
         //console.log(data);
 
         state.search.results = data.data.recipes.map(recipe => {
@@ -60,6 +61,7 @@ export const loadSearchResults = async function(query) {
                 title: recipe.title,
                 publisher: recipe.publisher,
                 image: recipe.image_url,   
+                ...(recipe.key && { key: recipe.key})
             }
         });
     } catch (error) {
@@ -132,7 +134,8 @@ export const uploadRecipe = async function (newRecipe) {
     try {
         const ingredients = Object.entries(newRecipe)
             .filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '' )
-            .map(ingr => { const ingArr = ingr[1].replaceAll(' ', '').split(',');
+            .map(ingr => { 
+                const ingArr = ingr[1].split(',').map(element => element.trim());
             // AMN - The array entered in the form for each ingredient must have three datum.
             if (ingArr.length !== 3) throw new Error('Wrong ingredient format! Please use the correct format :)')
 
@@ -151,7 +154,9 @@ export const uploadRecipe = async function (newRecipe) {
             ingredients,
         };
         console.log(recipe);
-        const data = await sendJSON(`${API_URL}?key=${KEY}`, recipe)
+        console.log("APIURL:", API_URL);
+        console.log("KEY: ", KEY);
+        const data = await AJAX(`${API_URL}?key=${KEY}`, recipe)
         state.recipe = createRecipeObject(data);
         addBookmark(state.recipe);
     } catch(err) {
