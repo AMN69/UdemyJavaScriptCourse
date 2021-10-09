@@ -9,6 +9,15 @@ export default class View {
 
     // AMN - This method renders the complete DOM for each change.
 
+    /**
+     * Render the recieve object to the DOM
+     * @param {Object || Object[]} data The data to be rendered (e.g. recipe)
+     * @param {boolean} [render=true] if false, create markup string instead of rendering to the DOM 
+     * @returns {undefined | string} A markup string is returned if render=false
+     * @this {Object} View instance
+     * @author AMN (copying Joans Schmedtmann javascript course)
+     * @todo Finish implementation
+    */
     render(data, render = true) {
       // AMN - guard clause if no data (one recipe) or array (several recipes) is empty we render a message
       if (!data || (Array.isArray(data) && data.length === 0)) 
